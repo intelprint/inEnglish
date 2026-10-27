@@ -259,8 +259,10 @@
             </div>
 
             <button type="button" onclick="clearInput()" id="clearBtn"
-              class="text-xs text-slate-400 hover:text-slate-600 px-1.5 py-0.5 rounded hover:bg-slate-100 hidden">
-              ✕ 지우기
+              title="입력한 내용 지우기"
+              class="hidden items-center space-x-1 px-2.5 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 border border-rose-300 font-extrabold text-xs shadow-xs transition-all btn-bounce">
+              <span class="text-xs">🗑️</span>
+              <span>지우기</span>
             </button>
           </div>
 
@@ -781,7 +783,13 @@
       const badgeText = document.getElementById('langIndicatorText');
       const clearBtn = document.getElementById('clearBtn');
 
-      clearBtn.classList.toggle('hidden', text.length === 0);
+      if (text.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('inline-flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('inline-flex');
+      }
 
       if (!text) {
         badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600";
@@ -1331,7 +1339,7 @@
      * 번역 요청 및 GAS RPC / Direct Gemini API 통신
      * =========================================
      */
-    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwrS5Jgbl33dmZ76fuHM6tzoCKt6hZKWU3Q_p6yyhkZW4xKzP2b4_FzcWxARbzcOTxC4w/exec';
+    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxGWxZx9XOfTs4nu8w5adMGT1V-eh1SUhlGgnglWtCdoWabJwe6dNmWBS-B_xjLl05afg/exec';
 
     function requestTranslation() {
       const text = document.getElementById('inputText').value.trim();
@@ -1380,8 +1388,7 @@
         .catch(err => {
           console.warn('GAS call fallback:', err);
           setLoading(false);
-          openApiKeyModal();
-          showError('Gemini API 키를 ⚙️ 설정에서 입력하시면 즉시 초고속으로 번역됩니다! 🔑');
+          showError('번역 서버에 일시적인 지연이 발생했습니다. 잠시 후 다시 시도하거나 선생님께 문의해주세요! 😊');
         });
     }
 
@@ -1476,10 +1483,7 @@
     function onTranslateSuccess(response) {
       setLoading(false);
       if (!response.success) {
-        if (response.needApiKey) {
-          openApiKeyModal();
-        }
-        showError(response.error || '번역을 완료하지 못했습니다.');
+        showError(response.error || '번역을 완료하지 못했습니다. 선생님께 문의해주세요.');
         return;
       }
 
