@@ -150,7 +150,7 @@
     }
   </style>
 </head>
-<body class="h-screen h-[100dvh] max-h-[100dvh] text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-hidden bg-slate-50">
+<body class="min-h-screen md:h-screen md:max-h-[100dvh] text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-x-hidden md:overflow-hidden bg-slate-50">
 
   <!-- ===============================
        상단 내비게이션 바 (슬림 & 깔끔)
@@ -640,8 +640,8 @@
       ]
     };
 
-    // 2022 개정 교육과정 초등 영어 번역 전용 기본 탑재 Gemini API 키 (학생 첫 접속 즉시 사용 가능)
-    const DEFAULT_API_KEY = 'AIzaSyAKQy-OIFFgsUtwNDSm3aG5khhBLSo848Y';
+    // 2022 개정 교육과정 초등 영어 번역 전용 기본 설정 (선생님 API 키는 설정 모달을 통해 기기별 안전 보관)
+    const DEFAULT_API_KEY = '';
     let inMemoryApiKey = '';
 
     function getStoredApiKey() {
@@ -1535,7 +1535,7 @@
 
     async function callDirectGemini(payload, apiKey) {
       const systemInstruction = buildClientSystemInstruction(payload.grade);
-      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      const models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash'];
       const body = {
         contents: [{
           parts: [{ text: payload.text }]
@@ -1572,7 +1572,7 @@
 
           // 비동기로 'inEnglish' 구글 시트에 학생 검색 히스토리 누적 기록 (fire-and-forget)
           try {
-            const logUrl = `${GAS_WEBAPP_URL}?action=logHistory&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}&translation=${encodeURIComponent(parsed.translation || '')}&direction=${encodeURIComponent(parsed.direction || 'ko-to-en')}&model=${encodeURIComponent(model || 'gemini-2.5-flash')}`;
+            const logUrl = `${GAS_WEBAPP_URL}?action=logHistory&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}&translation=${encodeURIComponent(parsed.translation || '')}&direction=${encodeURIComponent(parsed.direction || 'ko-to-en')}&model=${encodeURIComponent(model || 'gemini-3.8-flash')}`;
             fetch(logUrl, { mode: 'no-cors', keepalive: true }).catch(()=>{});
             const beacon = new Image();
             beacon.src = logUrl;
