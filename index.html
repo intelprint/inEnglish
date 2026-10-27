@@ -1354,7 +1354,7 @@
 
           // 비동기로 'inEnglish' 구글 시트에 학생 검색 히스토리 누적 기록 (fire-and-forget)
           try {
-            const logUrl = `${GAS_WEBAPP_URL}?action=translate&grade=${payload.grade}&text=${encodeURIComponent(payload.text)}`;
+            const logUrl = `${GAS_WEBAPP_URL}?action=logHistory&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}&translation=${encodeURIComponent(parsed.translation || '')}&direction=${encodeURIComponent(parsed.direction || 'ko-to-en')}&model=${encodeURIComponent(model || 'gemini-3.8-flash')}`;
             fetch(logUrl, { mode: 'no-cors' }).catch(()=>{});
           } catch(e) {}
           return; // 성공 시 종료
