@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>inEnglish 🎒 초등 3~6학년 교과서 맞춤 AI 번역기</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Pretendard & Nunito 웹 폰트 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'sans-serif'],
+            en: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+            },
+            mint: {
+              400: '#34D399',
+              500: '#10B981',
+            },
+            warm: {
+              yellow: '#FEF3C7',
+              amber: '#F59E0B',
+              coral: '#F43F5E',
+            }
+          },
+          boxShadow: {
+            'pill': '0 4px 14px 0 rgba(79, 70, 229, 0.25)',
+            'card': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03)',
+            'card-lg': '0 20px 30px -10px rgba(0, 0, 0, 0.08)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 태블릿/전자칠판 터치 최적화 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .font-en {
+      font-family: 'Nunito', sans-serif;
+    }
+    /* 음성인식 녹음 펄스 애니메이션 */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .mic-recording-pulse {
+      animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    /* 부드러운 전환 효과 */
+    .btn-bounce {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-bounce:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================================
+       전자칠판 (Chalkboard) 모드 고대비 테마
+       ========================================= */
+    body.board-mode-active {
+      background-color: #0b1e15 !important;
+    }
+    .board-mode-active #idlePlaceholder {
+      background-color: #133324 !important;
+      border: 4px solid #78350f !important; /* 원목 칠판 테두리 */
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    }
+    .board-mode-active #idlePlaceholder h2 {
+      color: #fef08a !important; /* 분필 노란색 */
+      font-size: 1.5rem !important;
+      font-weight: 900 !important;
+    }
+    .board-mode-active #idlePlaceholder p {
+      color: #6ee7b7 !important; /* 분필 초록색 */
+      font-size: 0.95rem !important;
+    }
+    .board-mode-active #resultSection {
+      background-color: #133324 !important; /* 딥 초록 칠판 */
+      border: 4px solid #78350f !important; /* 원목 분필틀 테두리 */
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.6) !important;
+    }
+    .board-mode-active #resultText {
+      color: #fef08a !important; /* 선명한 노란 분필 폰트 */
+      font-size: 2.75rem !important;
+      line-height: 1.15 !important;
+      letter-spacing: 0.02em !important;
+      text-shadow: 0 0 12px rgba(254, 240, 138, 0.4) !important;
+    }
+    @media (min-width: 640px) {
+      .board-mode-active #resultText {
+        font-size: 3.5rem !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      .board-mode-active #resultText {
+        font-size: 4.25rem !important;
+      }
+    }
+    .board-mode-active #resultGradeBadge {
+      background-color: #064e3b !important;
+      color: #a7f3d0 !important;
+      border: 1px solid #059669 !important;
+    }
+    .board-mode-active #pronunciationGuide span {
+      background-color: #064e3b !important;
+      border-color: #047857 !important;
+      color: #67e8f9 !important; /* 분필 하늘색 */
+      font-size: 1.15rem !important;
+    }
+    .board-mode-active #tipBox {
+      background-color: rgba(6, 78, 59, 0.85) !important;
+      border: 1px solid #059669 !important;
+      color: #fef3c7 !important;
+      font-size: 0.9rem !important;
+    }
+    .board-mode-active #keyWordsContainer span.bg-slate-100 {
+      background-color: #064e3b !important;
+      border-color: #059669 !important;
+      color: #ecfdf5 !important;
+      font-size: 0.85rem !important;
+    }
+    .board-mode-active #keyWordsContainer span.text-brand-600 {
+      color: #fde047 !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 md:h-screen md:overflow-hidden bg-slate-50">
+
+  <!-- ===============================
+       상단 내비게이션 바 (슬림 & 깔끔)
+  =============================== -->
+  <header class="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs flex-none">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between">
+      
+      <!-- 로고 및 서비스 타이틀 -->
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl filter drop-shadow-sm">🎒</span>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-slate-900 font-en">inEnglish</h1>
+            <span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-full bg-indigo-50 text-brand-600 border border-brand-100">
+              2022 개정 교육과정
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상단 컨트롤 (칠판 모드 / 설정) -->
+      <div class="flex items-center space-x-1.5">
+        <button id="boardModeBtn" onclick="toggleBoardMode()" 
+          title="전자칠판용 큰 글씨 모드"
+          class="flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 btn-bounce">
+          <span>🖥️</span>
+          <span id="boardModeText" class="hidden sm:inline">칠판 모드</span>
+        </button>
+
+        <button onclick="openApiKeyModal()" 
+          title="Gemini API 키 설정"
+          class="p-1.5 rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100 btn-bounce">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ===============================
+       메인 컨텐츠 영역: 태블릿 가로모드(md:) 좌우 2열 분할 레이아웃
+  =============================== -->
+  <main class="w-full max-w-7xl mx-auto p-2.5 sm:p-3.5 flex-1 flex flex-col md:h-[calc(100vh-52px)] md:overflow-hidden">
+    
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 flex-1 h-full min-h-0">
+
+      <!-- ===========================
+           [좌측 칼럼] 입력 & 학년 선택 (5칸 배정)
+      ============================ -->
+      <div class="md:col-span-5 flex flex-col space-y-2.5 h-full min-h-0">
+        
+        <!-- 1. 알약형 학년 선택 탭 (컴팩트 & 원클릭 동기화) -->
+        <section class="bg-white rounded-2xl p-2 sm:p-2.5 shadow-card border border-slate-100 flex-none">
+          <div class="flex items-center justify-between mb-1.5 px-1">
+            <span class="text-[11px] font-bold text-slate-500">🎯 학년 선택</span>
+            <select id="gradeSelectDropdown" onchange="onGradeDropdownChange(this.value)" 
+              class="text-[11px] bg-slate-50 border border-slate-200 rounded-lg px-2 py-0.5 text-slate-700 font-medium">
+              <option value="3">3학년 (기초)</option>
+              <option value="4">4학년 (일상)</option>
+              <option value="5">5학년 (문장)</option>
+              <option value="6">6학년 (표현)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5" id="gradePillsContainer">
+            <!-- 3학년 -->
+            <button type="button" onclick="selectGrade(3)" id="gradeBtn-3"
+              class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-brand-600 bg-brand-50 text-brand-700 shadow-sm font-bold">
+              <span class="text-xl mb-0.5">🐣</span>
+              <span class="text-xs sm:text-sm font-extrabold">3학년</span>
+            </button>
+            <!-- 4학년 -->
+            <button type="button" onclick="selectGrade(4)" id="gradeBtn-4"
+              class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold">
+              <span class="text-xl mb-0.5">🐥</span>
+              <span class="text-xs sm:text-sm font-extrabold">4학년</span>
+            </button>
+            <!-- 5학년 -->
+            <button type="button" onclick="selectGrade(5)" id="gradeBtn-5"
+              class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold">
+              <span class="text-xl mb-0.5">🚀</span>
+              <span class="text-xs sm:text-sm font-extrabold">5학년</span>
+            </button>
+            <!-- 6학년 -->
+            <button type="button" onclick="selectGrade(6)" id="gradeBtn-6"
+              class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold">
+              <span class="text-xl mb-0.5">🎓</span>
+              <span class="text-xs sm:text-sm font-extrabold">6학년</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. 스마트 입력 카드 (상하 여백 낭비 없이 꽉 채움) -->
+        <section class="bg-white rounded-2xl p-3 sm:p-3.5 shadow-card border border-slate-100 flex-1 flex flex-col min-h-0 justify-between space-y-2">
+          
+          <!-- 감지 배지 & 지우기 -->
+          <div class="flex items-center justify-between flex-none">
+            <div id="langIndicatorBadge" 
+              class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 transition-colors">
+              <span>✨</span>
+              <span id="langIndicatorText">한글 또는 영어를 입력해주세요</span>
+            </div>
+
+            <button type="button" onclick="clearInput()" id="clearBtn"
+              class="text-xs text-slate-400 hover:text-slate-600 px-1.5 py-0.5 rounded hover:bg-slate-100 hidden">
+              ✕ 지우기
+            </button>
+          </div>
+
+          <!-- 메인 텍스트 입력창 (높이 균형 최적화) -->
+          <div class="relative flex-1 min-h-[75px] sm:min-h-[90px] flex flex-col">
+            <textarea id="inputText" 
+              placeholder="번역하고 싶은 말을 입력하거나, 아래 마이크 🎙️를 눌러 말씀하세요!"
+              oninput="handleInputTextChange()"
+              onkeydown="handleKeyDown(event)"
+              class="w-full h-full flex-1 p-3 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none transition-all placeholder:text-slate-400 resize-none font-medium text-slate-900 leading-relaxed text-sm sm:text-base"></textarea>
+          </div>
+
+          <!-- 액션 바: 마이크 + 번역 버튼 -->
+          <div class="flex items-center justify-between gap-1.5 flex-none pt-0.5">
+            <div class="flex items-center space-x-1.5">
+              <button type="button" id="micBtn" onclick="toggleSpeechRecognition()"
+                class="flex items-center space-x-1 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs btn-bounce">
+                <span class="text-base">🎙️</span>
+                <span>말하기</span>
+              </button>
+
+              <div class="flex bg-slate-100 rounded-lg p-0.5 text-[11px] font-semibold text-slate-600">
+                <button type="button" id="speechLangKo" onclick="setSpeechLanguage('ko-KR')" 
+                  class="px-2 py-0.5 rounded-md bg-white text-slate-900 shadow-xs">한글</button>
+                <button type="button" id="speechLangEn" onclick="setSpeechLanguage('en-US')" 
+                  class="px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-900">영어</button>
+              </div>
+            </div>
+
+            <button type="button" id="translateBtn" onclick="requestTranslation()"
+              class="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-pill btn-bounce">
+              <span id="btnSpinner" class="hidden animate-spin">⏳</span>
+              <span id="btnIcon">✨</span>
+              <span id="btnText">번역하기</span>
+            </button>
+          </div>
+
+          <!-- 교실 추천 꿀표현 칩 -->
+          <div class="pt-1.5 border-t border-slate-100 flex-none">
+            <div class="text-[10px] font-bold text-slate-400 mb-1 flex items-center space-x-1">
+              <span>💡</span>
+              <span>교실 자주 쓰는 꿀표현:</span>
+            </div>
+            <div class="flex flex-wrap gap-1" id="quickPhrasesContainer">
+              <!-- JS에서 동적 주입 -->
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- ===========================
+           [우측 칼럼] 대답 패널 (7칸 배정 - 스크롤 없이 한눈에!)
+      ============================ -->
+      <div class="md:col-span-7 flex flex-col h-full min-h-0">
+        
+        <!-- 대기 상태 (번역 전 플레이스홀더) -->
+        <section id="idlePlaceholder" class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 h-full flex flex-col items-center justify-center text-center space-y-3">
+          <div class="w-14 h-14 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-3xl">
+            🎒
+          </div>
+          <div>
+            <h2 class="text-base font-extrabold text-slate-800">교과서 맞춤 대답이 여기에 나타나요</h2>
+            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">
+              왼쪽에서 학년을 고르고 말을 입력하거나 마이크 🎙️를 눌러보세요. 2022 개정 교육과정 수준에 딱 맞추어 번역해 드려요!
+            </p>
+          </div>
+        </section>
+
+        <!-- 번역 결과 카드 (번역 완료 시 표시) -->
+        <section id="resultSection" class="hidden bg-white rounded-2xl p-3.5 sm:p-4 shadow-card-lg border-2 border-indigo-100 h-full flex flex-col justify-between overflow-y-auto space-y-3">
+          
+          <!-- 카드 헤더: 학년 레벨 태그 + 발음/복사 컨트롤 -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 flex-none">
+            <div class="flex items-center space-x-1.5">
+              <span id="resultGradeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-100 text-brand-700">
+                3학년 맞춤 표현 ✨
+              </span>
+              <span id="cacheBadge" class="hidden px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700">
+                ⚡ 캐시
+              </span>
+            </div>
+
+            <!-- 발음 듣기 & 복사 버튼 -->
+            <div class="flex items-center space-x-1.5">
+              <button type="button" onclick="toggleTtsSpeed()" id="ttsSpeedBtn" 
+                title="발음 속도 조절"
+                class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold btn-bounce">
+                🐢 보통
+              </button>
+
+              <button type="button" onclick="speakResult()" id="speakBtn"
+                class="flex items-center space-x-1 px-3 py-1 rounded-lg bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold text-xs shadow-sm btn-bounce">
+                <span>🔊</span>
+                <span>발음 듣기</span>
+              </button>
+
+              <button type="button" onclick="copyResult()" id="copyBtn"
+                class="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs btn-bounce">
+                <span id="copyIcon">📋</span>
+                <span id="copyText">복사</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 메인 번역 문장 출력부 -->
+          <div class="py-1 flex-1 flex flex-col justify-center min-h-0">
+            <p id="resultText" 
+              class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all">
+              <!-- 번역 결과 텍스트 -->
+            </p>
+
+            <!-- 국제음성기호(IPA) 정확한 발음 표기 (한글 발음 완전 제거) -->
+            <div id="pronunciationGuide" class="mt-2.5 flex items-center">
+              <span class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold font-mono text-indigo-700 bg-indigo-50/90 border border-indigo-100 px-3 py-1 rounded-xl">
+                <span>🔤 발음기호:</span>
+                <span id="ipaSymbolText" class="tracking-wide"></span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 교실 친절 팁 -->
+          <div id="tipBox" class="p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 font-medium flex items-start space-x-1.5 flex-none">
+            <span class="text-sm">👩‍🏫</span>
+            <span id="tipText">선생님 팁이 여기에 표시됩니다.</span>
+          </div>
+
+          <!-- 교과서 쏙쏙 단어장 -->
+          <div id="keyWordsContainer" class="pt-2 border-t border-slate-100 flex-none">
+            <div class="text-[11px] font-bold text-slate-400 mb-1.5 flex items-center space-x-1">
+              <span>📖</span>
+              <span>교과서 핵심 어휘:</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5" id="keyWordsList">
+              <!-- 단어 칩들이 들어옵니다 -->
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- 오류 안내 카드 -->
+    <div id="errorCard" class="hidden mt-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center space-x-2 flex-none">
+      <span class="text-lg">⚠️</span>
+      <span id="errorMessage">오류 내용이 표시됩니다.</span>
+    </div>
+
+  </main>
+
+  <!-- ===============================
+       하단 정보 및 푸터 (모바일 전용 - 태블릿 가로모드에서는 화면 넘침 방지 위해 숨김)
+  =============================== -->
+  <footer class="md:hidden max-w-3xl w-full mx-auto px-4 py-3 text-center text-xs text-slate-400 border-t border-slate-200/60 mt-2">
+    <p>대한민국 2022 개정 영어과 교육과정(초등 3~6학년) 기준 준수 | Gemini Flash AI 엔진</p>
+  </footer>
+
+  <!-- ===============================
+       API 키 설정 모달 (선생님 전용)
+  =============================== -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">⚙️</span>
+          <h2 class="text-lg font-bold text-slate-900">Gemini API 키 설정</h2>
+        </div>
+        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-500 leading-relaxed">
+        선생님의 유료 티어(또는 무료) Google AI Studio API 키를 등록하세요. 
+        브라우저에 안전하게 저장되며, Apps Script 속성에 등록되어 있는 경우 비워두셔도 자동 작동합니다.
+      </p>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">API Key</label>
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy..."
+          class="w-full text-sm p-3 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:border-brand-500 focus:outline-none font-mono">
+      </div>
+
+      <!-- 학생 검색 기록 구글 시트 확인 섹션 -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-800 flex items-center space-x-1">
+            <span>📊</span>
+            <span>학생 검색 히스토리 ('inEnglish' 시트)</span>
+          </span>
+          <p class="text-[11px] text-slate-400 mt-0.5">날짜, 시간, 학년, 학생의 검색어 및 번역이 누적됩니다.</p>
+        </div>
+        <button type="button" onclick="openHistorySheet()" 
+          class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-brand-700 font-extrabold text-xs flex items-center space-x-1 border border-brand-200 btn-bounce">
+          <span>시트 열기 ↗</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-end space-x-2 pt-1">
+        <button type="button" onclick="closeApiKeyModal()" 
+          class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-bold">
+          취소
+        </button>
+        <button type="button" onclick="saveApiKey()" 
+          class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-extrabold shadow-sm">
+          저장하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============================
+       인라인 음성 인식 모달 (태블릿 무팝업 지원)
+  =============================== -->
+  <div id="voiceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 animate-scaleUp">
+      <!-- 헤더 & 언어 토글 -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🎙️</span>
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900">음성으로 말하기</h2>
+            <p class="text-xs text-slate-500">교실 소음이 있어도 키보드로 글자를 직접 고칠 수 있어요!</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="flex bg-slate-100 rounded-xl p-1 text-xs font-bold">
+            <button type="button" id="modalLangKo" onclick="setModalSpeechLang('ko-KR')" class="px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs">한글</button>
+            <button type="button" id="modalLangEn" onclick="setModalSpeechLang('en-US')" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800">영어</button>
+          </div>
+          <button type="button" onclick="closeVoiceModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
+        </div>
+      </div>
+
+      <!-- 마이크 원형 애니메이션 버튼 -->
+      <div class="flex flex-col items-center justify-center py-2 space-y-2">
+        <div class="relative flex items-center justify-center">
+          <div id="modalPulseRing" class="w-20 h-20 rounded-full bg-rose-400/40 pulse-effect absolute"></div>
+          <button type="button" id="modalMicBtn" onclick="toggleModalListening()" class="w-16 h-16 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center text-3xl shadow-lg relative z-10 transition-transform active:scale-95">🎙️</button>
+        </div>
+        <p id="modalStatusMsg" class="text-xs font-extrabold text-indigo-600">🎙️ 듣고 있어요! 편하게 말씀하세요...</p>
+      </div>
+
+      <!-- 음성 인식 및 키보드 수정 입력창 -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between px-1">
+          <label for="modalVoiceInput" class="text-xs font-bold text-slate-700 flex items-center space-x-1">
+            <span>✏️ 인식된 내용 (필요한 경우 키보드로 직접 수정하세요):</span>
+          </label>
+          <button type="button" onclick="clearModalVoiceInput()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">지우기</button>
+        </div>
+        <textarea id="modalVoiceInput" rows="3"
+          class="w-full p-3.5 bg-slate-50 focus:bg-white rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 text-base font-bold text-slate-800 leading-relaxed resize-none focus:outline-none shadow-inner"
+          placeholder="말씀하신 내용이 여기에 나타나요. 잘못 인식된 단어나 이름은 키보드로 바로 고쳐보세요!"></textarea>
+      </div>
+
+      <!-- 하단 버튼 바 -->
+      <div class="flex items-center justify-between pt-1">
+        <button type="button" onclick="closeVoiceModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all">취소</button>
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="restartModalListening()" class="px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-all">🎙️ 다시 말하기</button>
+          <button type="button" onclick="submitModalVoiceResult()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition-all flex items-center space-x-1.5">
+            <span>✨</span><span>완료 및 번역</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============================
+       프론트엔드 비즈니스 로직 스크립트
+  =============================== -->
+  <script>
+    // 상태 변수
+    let currentGrade = 3;
+    let isBoardMode = false;
+    let speechRecognition = null;
+    let isRecognizing = false;
+    let speechLang = 'ko-KR'; // 기본 음성인식 언어: 한국어
+    let ttsSlow = false; // 느린 발음 여부
+    let lastResultObj = null;
+
+    // 학년별 자주 쓰는 교실 추천 표현 (초등 3~6학년 교과서 빈출)
+    const QUICK_PHRASES = {
+      3: [
+        "화장실 다녀와도 돼요?",
+        "선생님 도와주세요!",
+        "이거 뭐예요?",
+        "내 차례야!",
+        "만나서 반가워!",
+        "I like soccer."
+      ],
+      4: [
+        "지금 몇 시예요?",
+        "제 공책이 어디에 있나요?",
+        "오늘 날씨가 정말 좋아요.",
+        "숙제 다 끝냈어요!",
+        "What are you doing?"
+      ],
+      5: [
+        "어제 숙제를 다 못했어요.",
+        "이번 주말에 할머니 댁에 갈 거예요.",
+        "제 차례가 언제인가요?",
+        "질문이 하나 있어요.",
+        "What did you do yesterday?"
+      ],
+      6: [
+        "제가 먼저 발표해도 될까요?",
+        "왜냐하면 머리가 아팠기 때문이에요.",
+        "우리 같이 점심 먹으러 갈래?",
+        "제 키가 더 커요.",
+        "Why don't you join us?"
+      ]
+    };
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      // 로컬 스토리지에서 API 키 불러오기
+      const savedKey = localStorage.getItem('IN_ENGLISH_API_KEY');
+      if (savedKey) {
+        document.getElementById('apiKeyInput').value = savedKey;
+      }
+      
+      selectGrade(3);
+      initSpeechRecognition();
+    });
+
+    /**
+     * 학년 선택 처리 (알약 탭 + 드롭다운 동기화)
+     */
+    function selectGrade(grade) {
+      currentGrade = parseInt(grade, 10);
+      
+      // 드롭다운 동기화
+      document.getElementById('gradeSelectDropdown').value = currentGrade;
+
+      // 알약 탭 스타일 업데이트
+      for (let g = 3; g <= 6; g++) {
+        const btn = document.getElementById(`gradeBtn-${g}`);
+        if (!btn) continue;
+
+        if (g === currentGrade) {
+          btn.className = "grade-pill flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl border-2 transition-all duration-150 btn-bounce border-brand-600 bg-brand-50 text-brand-700 shadow-sm font-bold scale-[1.02]";
+        } else {
+          btn.className = "grade-pill flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold";
+        }
+      }
+
+      // 퀵 표현 칩 갱신
+      renderQuickPhrases();
+      handleInputTextChange();
+    }
+
+    function onGradeDropdownChange(val) {
+      selectGrade(val);
+    }
+
+    /**
+     * 교실 퀵 표현 칩 렌더링
+     */
+    function renderQuickPhrases() {
+      const container = document.getElementById('quickPhrasesContainer');
+      container.innerHTML = '';
+      const phrases = QUICK_PHRASES[currentGrade] || QUICK_PHRASES[3];
+
+      phrases.forEach(text => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-indigo-50 hover:text-brand-700 hover:border-brand-200 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-all btn-bounce';
+        chip.textContent = text;
+        chip.onclick = () => {
+          document.getElementById('inputText').value = text;
+          handleInputTextChange();
+          requestTranslation();
+        };
+        container.appendChild(chip);
+      });
+    }
+
+    /**
+     * 실시간 입력 언어 감지 및 배지 업데이트
+     */
+    function handleInputTextChange() {
+      const text = document.getElementById('inputText').value.trim();
+      const badge = document.getElementById('langIndicatorBadge');
+      const badgeText = document.getElementById('langIndicatorText');
+      const clearBtn = document.getElementById('clearBtn');
+
+      clearBtn.classList.toggle('hidden', text.length === 0);
+
+      if (!text) {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600";
+        badgeText.textContent = "한글 또는 영어를 입력해주세요";
+        return;
+      }
+
+      // 제3외국어 검사 (일본어/한자/아랍어 등)
+      const invalidRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\u0600-\u06FF\u0400-\u04FF]/;
+      if (invalidRegex.test(text)) {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 animate-bounce";
+        badgeText.textContent = "⚠️ 한글과 영어만 지원해요!";
+        return;
+      }
+
+      const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text);
+      const hasEnglish = /[a-zA-Z]/.test(text);
+
+      if (hasKorean && hasEnglish) {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200";
+        badgeText.textContent = "🔄 한·영 혼합 스마트 완성 모드";
+      } else if (hasKorean) {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-brand-700 border border-brand-200";
+        badgeText.textContent = "🇰🇷 한글 ➔ 🇺🇸 영어 번역 모드";
+      } else if (hasEnglish) {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+        badgeText.textContent = "🇺🇸 영어 ➔ 🇰🇷 한글 번역 모드";
+      } else {
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600";
+        badgeText.textContent = "글자를 입력해주세요";
+      }
+    }
+
+    function clearInput() {
+      document.getElementById('inputText').value = '';
+      handleInputTextChange();
+      const resultSec = document.getElementById('resultSection');
+      const idleSec = document.getElementById('idlePlaceholder');
+      if (resultSec) resultSec.classList.add('hidden');
+      if (idleSec) idleSec.classList.remove('hidden');
+      document.getElementById('inputText').focus();
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        requestTranslation();
+      }
+    }
+
+    /**
+     * =========================================
+     * 음성 인식 (STT) - 독립 음성 컨트롤러 팝업 방식
+     * (맥락 전체 누적 인식 + 수동 키보드 수정 + 사용자 직접 완료 전송)
+     * =========================================
+     */
+    // 음성 인식 팝업으로부터 전송받은 최종 텍스트 수신 리스너
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'IN_ENGLISH_VOICE_RESULT') {
+        const text = event.data.text;
+        if (text && text.trim()) {
+          document.getElementById('inputText').value = text.trim();
+          handleInputTextChange();
+          // 맥락 인식 및 학년 맞춤 번역 바로 실행!
+          requestTranslation();
+        }
+      }
+    });
+
+    /**
+     * 마이크 버튼 클릭 시 음성 인식 실행
+     * - GitHub Pages / 태블릿: 새 창/새 탭 없이 화면 내 인라인 모달로 음성 인식
+     * - GAS iframe 내부: 모달 실행 후 브라우저 정책 차단 시 독립 팝업 창 연동
+     */
+    function toggleSpeechRecognition() {
+      openVoiceModal(speechLang);
+    }
+
+    let modalRec = null;
+    let isModalListening = false;
+    let modalSpeechLang = 'ko-KR';
+
+    function openVoiceModal(lang) {
+      modalSpeechLang = lang || speechLang || 'ko-KR';
+      setModalSpeechLang(modalSpeechLang);
+      
+      const modal = document.getElementById('voiceModal');
+      if (modal) modal.classList.remove('hidden');
+      
+      const currentInput = document.getElementById('inputText').value.trim();
+      document.getElementById('modalVoiceInput').value = currentInput;
+      
+      startModalListening();
+    }
+
+    function closeVoiceModal() {
+      stopModalListening();
+      const modal = document.getElementById('voiceModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setModalSpeechLang(lang) {
+      modalSpeechLang = lang;
+      speechLang = lang;
+      const koBtn = document.getElementById('modalLangKo');
+      const enBtn = document.getElementById('modalLangEn');
+      if (koBtn && enBtn) {
+        if (lang === 'ko-KR') {
+          koBtn.className = "px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs";
+          enBtn.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800";
+        } else {
+          enBtn.className = "px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs";
+          koBtn.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800";
+        }
+      }
+      setSpeechLanguage(lang);
+      if (isModalListening) {
+        restartModalListening();
+      }
+    }
+
+    function startModalListening() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const statusEl = document.getElementById('modalStatusMsg');
+      const ringEl = document.getElementById('modalPulseRing');
+
+      if (!SR) {
+        if (statusEl) {
+          statusEl.textContent = "⚠️ 브라우저가 음성 인식을 지원하지 않습니다. (Chrome 권장)";
+          statusEl.className = "text-xs font-extrabold text-rose-600";
+        }
+        return;
+      }
+
+      try {
+        if (modalRec) {
+          try { modalRec.abort(); } catch(e) {}
+        }
+        modalRec = new SR();
+        modalRec.continuous = true;
+        modalRec.interimResults = true;
+        modalRec.lang = modalSpeechLang;
+
+        modalRec.onstart = function() {
+          isModalListening = true;
+          if (ringEl) ringEl.classList.remove('hidden');
+          const langName = (modalSpeechLang === 'en-US') ? '영어' : '한국어';
+          if (statusEl) {
+            statusEl.textContent = `🎙️ 듣고 있어요! ${langName}로 편하게 말씀하세요...`;
+            statusEl.className = "text-xs font-extrabold text-indigo-600";
+          }
+        };
+
+        modalRec.onresult = function(e) {
+          let final = '';
+          let interim = '';
+          for (let i = 0; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+              final += e.results[i][0].transcript;
+            } else {
+              interim += e.results[i][0].transcript;
+            }
+          }
+          const full = (final + (interim ? ' ' + interim : '')).trim();
+          if (full) {
+            document.getElementById('modalVoiceInput').value = full;
+          }
+        };
+
+        modalRec.onerror = function(err) {
+          console.warn('modalRec error:', err.error);
+          if (err.error === 'not-allowed') {
+            // iframe 보안 제약(GAS 등)으로 인라인 권한 차단된 경우
+            if (window.self !== window.top) {
+              if (statusEl) {
+                statusEl.innerHTML = '⚠️ 구글 앱 보안으로 인라인 마이크가 차단되었습니다. <button type="button" onclick="openVoicePopup(modalSpeechLang)" class="underline font-bold text-rose-600">독립 마이크 창 열기 🎙️</button>';
+                statusEl.className = "text-xs font-extrabold text-rose-600";
+              }
+            } else {
+              if (statusEl) {
+                statusEl.textContent = '⚠️ 주소창 좌측 🔒에서 마이크 권한을 허용해주세요!';
+                statusEl.className = "text-xs font-extrabold text-rose-600";
+              }
+            }
+          }
+        };
+
+        modalRec.onend = function() {
+          isModalListening = false;
+          if (ringEl) ringEl.classList.add('hidden');
+          const val = document.getElementById('modalVoiceInput').value.trim();
+          if (val) {
+            if (statusEl) {
+              statusEl.textContent = "✅ 인식이 끝났어요. 글자를 확인하고 수정한 뒤 [완료 및 번역]을 누르세요!";
+              statusEl.className = "text-xs font-extrabold text-emerald-600";
+            }
+          } else {
+            if (statusEl) {
+              statusEl.textContent = "말씀이 끝나셨나요? [다시 말하기]를 누르거나 키보드로 직접 입력해보세요.";
+              statusEl.className = "text-xs font-extrabold text-slate-500";
+            }
+          }
+        };
+
+        modalRec.start();
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function stopModalListening() {
+      if (modalRec) {
+        try { modalRec.stop(); } catch(e) {}
+      }
+      isModalListening = false;
+      const ring = document.getElementById('modalPulseRing');
+      if (ring) ring.classList.add('hidden');
+    }
+
+    function toggleModalListening() {
+      if (isModalListening) {
+        stopModalListening();
+      } else {
+        startModalListening();
+      }
+    }
+
+    function restartModalListening() {
+      document.getElementById('modalVoiceInput').value = '';
+      startModalListening();
+    }
+
+    function clearModalVoiceInput() {
+      document.getElementById('modalVoiceInput').value = '';
+      document.getElementById('modalVoiceInput').focus();
+    }
+
+    function submitModalVoiceResult() {
+      const text = document.getElementById('modalVoiceInput').value.trim();
+      if (!text) {
+        alert('말씀하시거나 번역할 내용을 입력해주세요! 😊');
+        return;
+      }
+      stopModalListening();
+      closeVoiceModal();
+
+      document.getElementById('inputText').value = text;
+      handleInputTextChange();
+      requestTranslation();
+    }
+
+    /**
+     * 독립 음성 인식 컨트롤러 팝업
+     */
+    function openVoicePopup(lang) {
+      hideError();
+      const width = 420;
+      const height = 480;
+      const left = Math.max(0, (window.screen.width - width) / 2);
+      const top = Math.max(0, (window.screen.height - height) / 2);
+
+      const popup = window.open('', 'inEnglishVoice', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=no,scrollbars=no');
+      
+      if (!popup) {
+        alert('팝업 차단이 설정되어 있습니다. 브라우저 주소창 우측에서 팝업을 허용해주세요! 🎙️');
+        return;
+      }
+
+      const langName = (lang === 'en-US') ? '영어' : '한국어';
+      const promptTip = (lang === 'en-US') ? 'Speak in English...' : '선생님과 친구의 목소리를 듣고 있어요';
+
+      const popupHtml = '<!DOCTYPE html>' +
+        '<html lang="ko"><head><meta charset="UTF-8"><title>inEnglish 음성 입력</title>' +
+        '<script src="https://cdn.tailwindcss.com"><\/script>' +
+        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>' +
+        '<style>' +
+        'body{font-family:Pretendard,sans-serif;}' +
+        '@keyframes pulse-ring{0%{transform:scale(0.95);opacity:0.8;}50%{transform:scale(1.2);opacity:0.2;}100%{transform:scale(0.95);opacity:0.8;}}' +
+        '.pulse-effect{animation:pulse-ring 1.4s infinite;}' +
+        '</style></head>' +
+        '<body class="bg-slate-50 flex flex-col items-center justify-between p-5 min-h-screen text-center selection:bg-indigo-100">' +
+        '<div class="w-full">' +
+        '  <div class="flex items-center justify-between border-b border-slate-200/80 pb-2 mb-3">' +
+        '    <div class="flex items-center space-x-1.5">' +
+        '      <span class="text-xl">🎒</span>' +
+        '      <span class="text-sm font-extrabold text-slate-800">inEnglish 음성 입력</span>' +
+        '    </div>' +
+        '    <div class="flex bg-slate-200/70 rounded-lg p-0.5 text-xs font-bold text-slate-600">' +
+        '      <button type="button" id="langKoBtn" onclick="changeLang(\'ko-KR\')" class="px-2 py-0.5 rounded-md ' + (lang === 'ko-KR' ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-500') + '">한국어</button>' +
+        '      <button type="button" id="langEnBtn" onclick="changeLang(\'en-US\')" class="px-2 py-0.5 rounded-md ' + (lang === 'en-US' ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-500') + '">영어</button>' +
+        '    </div>' +
+        '  </div>' +
+        '  <h1 class="text-base font-extrabold text-slate-800">' + promptTip + '</h1>' +
+        '  <p class="text-xs text-slate-500 mt-0.5">' + langName + '로 편하게 말씀하시면 문맥을 파악해 글자로 적혀요!</p>' +
+        '</div>' +
+        '<div class="my-3 relative flex items-center justify-center">' +
+        '  <div id="pulseRing" class="w-18 h-18 rounded-full bg-rose-400 pulse-effect absolute"></div>' +
+        '  <button type="button" id="micBtn" onclick="toggleRec()" class="w-16 h-16 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center text-3xl shadow-lg relative z-10 transition-transform active:scale-95">🎙️</button>' +
+        '</div>' +
+        '<div class="w-full text-left">' +
+        '  <div class="flex items-center justify-between mb-1 px-1">' +
+        '    <span id="statusMsg" class="text-xs font-extrabold text-indigo-600">🎙️ 듣고 있어요! 편하게 말씀하세요...</span>' +
+        '    <button type="button" onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-slate-600 font-semibold">지우기</button>' +
+        '  </div>' +
+        '  <textarea id="popupInput" rows="3" class="w-full p-3 bg-white rounded-2xl border-2 border-indigo-200 text-sm sm:text-base font-bold text-slate-800 leading-relaxed resize-none focus:outline-none focus:border-indigo-500 shadow-xs" placeholder="말씀하신 내용이 여기에 문맥에 맞게 글자로 적혀요. 잘못된 단어는 직접 키보드로 고쳐보세요!"></textarea>' +
+        '</div>' +
+        '<div class="w-full mt-3 flex items-center justify-between space-x-2">' +
+        '  <button type="button" onclick="window.close()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-all">취소</button>' +
+        '  <div class="flex items-center space-x-1.5 flex-1 justify-end">' +
+        '    <button type="button" onclick="restartRec()" class="px-3 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-all">🎙️ 다시 말하기</button>' +
+        '    <button type="button" id="doneBtn" onclick="sendResultAndClose()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition-all flex items-center space-x-1">' +
+        '      <span>✨</span><span>완료 및 번역</span>' +
+        '    </button>' +
+        '  </div>' +
+        '</div>' +
+        '<script>' +
+        'let activeLang = "' + lang + '";' +
+        'let rec = null;' +
+        'let isListening = false;' +
+        'let finalTranscript = "";' +
+        'const SR = window.SpeechRecognition || window.webkitSpeechRecognition;' +
+        'function startRec() {' +
+        '  if (!SR) {' +
+        '    document.getElementById("popupInput").value = "브라우저가 음성 인식을 지원하지 않습니다. (Chrome 권장)";' +
+        '    return;' +
+        '  }' +
+        '  try {' +
+        '    if (rec) { rec.abort(); }' +
+        '    rec = new SR();' +
+        '    rec.continuous = true;' +
+        '    rec.interimResults = true;' +
+        '    rec.lang = activeLang;' +
+        '    rec.onstart = function() {' +
+        '      isListening = true;' +
+        '      document.getElementById("pulseRing").classList.remove("hidden");' +
+        '      document.getElementById("statusMsg").textContent = "🎙️ 듣고 있어요! 편하게 말씀하세요...";' +
+        '      document.getElementById("statusMsg").className = "text-xs font-extrabold text-indigo-600";' +
+        '    };' +
+        '    rec.onresult = function(e) {' +
+        '      let final = "";' +
+        '      let interim = "";' +
+        '      for (let i = 0; i < e.results.length; ++i) {' +
+        '        if (e.results[i].isFinal) {' +
+        '          final += e.results[i][0].transcript;' +
+        '        } else {' +
+        '          interim += e.results[i][0].transcript;' +
+        '        }' +
+        '      }' +
+        '      finalTranscript = final;' +
+        '      const full = (final + (interim ? " " + interim : "")).trim();' +
+        '      if (full) {' +
+        '        document.getElementById("popupInput").value = full;' +
+        '      }' +
+        '    };' +
+        '    rec.onerror = function(err) {' +
+        '      console.warn("rec error:", err.error);' +
+        '      if (err.error === "not-allowed") {' +
+        '        document.getElementById("statusMsg").textContent = "⚠️ 주소창 좌측 🔒에서 마이크를 허용해주세요!";' +
+        '        document.getElementById("statusMsg").className = "text-xs font-extrabold text-rose-600";' +
+        '      }' +
+        '    };' +
+        '    rec.onend = function() {' +
+        '      isListening = false;' +
+        '      document.getElementById("pulseRing").classList.add("hidden");' +
+        '      const val = document.getElementById("popupInput").value.trim();' +
+        '      if (val) {' +
+        '        document.getElementById("statusMsg").textContent = "✅ 인식이 끝났어요. 글자를 확인하고 수정한 뒤 [완료 및 번역]을 누르세요!";' +
+        '        document.getElementById("statusMsg").className = "text-xs font-extrabold text-emerald-600";' +
+        '      } else {' +
+        '        document.getElementById("statusMsg").textContent = "말씀이 끝나셨나요? [다시 말하기]를 누르거나 키보드로 직접 입력해보세요.";' +
+        '        document.getElementById("statusMsg").className = "text-xs font-extrabold text-slate-500";' +
+        '      }' +
+        '    };' +
+        '    rec.start();' +
+        '  } catch(e) { console.error(e); }' +
+        '}' +
+        'function toggleRec() {' +
+        '  if (isListening && rec) { rec.stop(); } else { startRec(); }' +
+        '}' +
+        'function restartRec() {' +
+        '  document.getElementById("popupInput").value = "";' +
+        '  finalTranscript = "";' +
+        '  startRec();' +
+        '}' +
+        'function clearInput() {' +
+        '  document.getElementById("popupInput").value = "";' +
+        '  document.getElementById("popupInput").focus();' +
+        '}' +
+        'function changeLang(newLang) {' +
+        '  activeLang = newLang;' +
+        '  document.getElementById("langKoBtn").className = "px-2 py-0.5 rounded-md " + (newLang === "ko-KR" ? "bg-white text-indigo-700 shadow-xs" : "text-slate-500");' +
+        '  document.getElementById("langEnBtn").className = "px-2 py-0.5 rounded-md " + (newLang === "en-US" ? "bg-white text-indigo-700 shadow-xs" : "text-slate-500");' +
+        '  restartRec();' +
+        '}' +
+        'function sendResultAndClose() {' +
+        '  const userVal = document.getElementById("popupInput").value.trim();' +
+        '  if (!userVal) { alert("번역할 내용을 입력하거나 말씀해주세요!"); return; }' +
+        '  if (rec) { try { rec.abort(); } catch(e) {} }' +
+        '  if (window.opener) {' +
+        '    window.opener.postMessage({ type: "IN_ENGLISH_VOICE_RESULT", text: userVal }, "*");' +
+        '  }' +
+        '  window.close();' +
+        '}' +
+        'startRec();' +
+        '<\/script></body></html>';
+
+      popup.document.open();
+      popup.document.write(popupHtml);
+      popup.document.close();
+    }
+
+    function openHistorySheet() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(function(res) {
+          if (res && res.success && res.url) {
+            window.open(res.url, '_blank');
+          } else {
+            alert('구글 시트 생성/조회 중 오류가 발생했습니다: ' + (res.error || '잠시 후 다시 시도해주세요.'));
+          }
+        }).getHistorySheetUrl();
+      } else {
+        alert('Google Apps Script 환경에서만 구글 시트가 열립니다.');
+      }
+    }
+
+    function initSpeechRecognition() {
+      // 팝업 방식으로 완전 전환
+    }
+
+    function stopSpeechRecognition() {
+      // 팝업 방식으로 완전 전환
+    }
+
+    function setSpeechLanguage(lang) {
+      speechLang = lang;
+      if (speechRecognition) {
+        speechRecognition.lang = lang;
+      }
+      const koBtn = document.getElementById('speechLangKo');
+      const enBtn = document.getElementById('speechLangEn');
+
+      if (lang === 'ko-KR') {
+        koBtn.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-xs";
+        enBtn.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-xs";
+        koBtn.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900";
+      }
+    }
+
+    /**
+     * =========================================
+     * 번역 요청 및 GAS RPC / Direct Gemini API 통신
+     * =========================================
+     */
+    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxGWxZx9XOfTs4nu8w5adMGT1V-eh1SUhlGgnglWtCdoWabJwe6dNmWBS-B_xjLl05afg/exec';
+
+    function requestTranslation() {
+      const text = document.getElementById('inputText').value.trim();
+      if (!text) {
+        showError('번역할 내용을 입력하거나 마이크로 말씀해주세요! 😊');
+        return;
+      }
+
+      hideError();
+      setLoading(true);
+
+      const clientApiKey = localStorage.getItem('IN_ENGLISH_API_KEY') || '';
+
+      const payload = {
+        grade: currentGrade,
+        text: text,
+        clientApiKey: clientApiKey
+      };
+
+      // 1. Google Apps Script 환경인 경우 (google.script.run)
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(onTranslateSuccess)
+          .withFailureHandler(onTranslateFailure)
+          .translateElementary(payload);
+        return;
+      }
+
+      // 2. GitHub Pages / 독립 웹 환경
+      if (clientApiKey) {
+        // 교사용 API 키가 있으면 Gemini API를 직접 호출 (~300ms 초고속 처리)
+        callDirectGemini(payload, clientApiKey);
+      } else {
+        // GAS Web App 엔드포인트 호출
+        callGasBackend(payload);
+      }
+    }
+
+    function callGasBackend(payload) {
+      const apiUrl = `${GAS_WEBAPP_URL}?action=translate&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}`;
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(res => {
+          onTranslateSuccess(res);
+        })
+        .catch(err => {
+          console.warn('GAS call fallback:', err);
+          setLoading(false);
+          openApiKeyModal();
+          showError('Gemini API 키를 ⚙️ 설정에서 입력하시면 즉시 초고속으로 번역됩니다! 🔑');
+        });
+    }
+
+    function buildClientSystemInstruction(grade) {
+      const g = parseInt(grade, 10) || 3;
+      const limits = {
+        3: "초등 3학년 교육과정 (약 240단어 이내, 3~5단어 초단문, be동사/기초일반동사/Can I ~)",
+        4: "초등 4학년 교육과정 (약 350단어 이내, 시간/날씨/위치/현재진행형 기초)",
+        5: "초등 5학년 교육과정 (약 550단어 이내, 과거시제/미래 will/빈도부사)",
+        6: "초등 6학년 교육과정 (약 800단어 이내, 비교급/제안/신체증상)"
+      };
+      return `당신은 대한민국 초등학교 3~6학년 영어과 교과 전담교사를 보조하는 AI 번역 전문가입니다.
+대한민국 교육부 고시 2022 개정 영어과 교육과정을 엄격히 준수합니다.
+대상: ${g}학년 (${limits[g] || limits[3]})
+
+[필수 규칙]
+1. 학생이 어려운 한국어나 일상어를 입력하더라도 해당 학년 교과서 수준의 아주 친근하고 쉬운 어휘로 의역(Simplification)하세요.
+2. 한/영 혼용(Code-switching) 자동 판별:
+   - 학생이 모르는 단어만 한글로 쓴 경우(예: 'can i get to the 화장실?', 'Where is my 필통?'):
+     완벽하고 자연스러운 영어 문장으로 완성하고, direction: "mixed-to-en", keyWords의 1순위로 한글이었던 핵심 단어(예: word: "bathroom", meaning: "화장실")를 반드시 포함하세요.
+   - 영어 표현의 뜻을 묻는 경우(예: 'apple이 뭐야?'): direction: "en-to-ko", 한국어 뜻으로 친절하게 답변하세요.
+   - 한국어에 영어를 섞은 경우(예: '선생님 help me 해주세요'): direction: "mixed-to-en", 학년 수준의 바른 영어 문장으로 완성하세요.
+3. pronunciation 표기:
+   영어 문장일 경우 국제음성기호(IPA) 정확한 발음기호만 작성하세요 (예: /kæn aɪ ɡoʊ tu ðə ˈbæθruːm/).
+   ★ '아이 엠 보어드' 같은 한글 발음 표기는 절대로 하지 마세요! 한국어 결과일 경우 빈 문자열("")로 두세요.
+4. 순수 JSON 포맷으로만 출력하세요:
+{
+  "direction": "ko-to-en, en-to-ko, 또는 mixed-to-en",
+  "translation": "최종 번역 결과 문장",
+  "grade": ${g},
+  "curriculumLevel": "${g}학년 맞춤 어휘",
+  "pronunciation": "/IPA 발음기호/ (영문일 때만, 한글발음 절대 금지)",
+  "tip": "초등학생 눈높이 1줄 친절 팁",
+  "keyWords": [{"word": "단어", "meaning": "뜻"}]
+}`;
+    }
+
+    function callDirectGemini(payload, apiKey) {
+      const systemInstruction = buildClientSystemInstruction(payload.grade);
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const body = {
+        contents: [{
+          parts: [{ text: payload.text }]
+        }],
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        generationConfig: {
+          responseMimeType: 'application/json'
+        }
+      };
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(res => res.json())
+      .then(resData => {
+        try {
+          if (resData.error) {
+            throw new Error(resData.error.message || 'API 오류');
+          }
+          const jsonText = resData.candidates[0].content.parts[0].text;
+          const parsed = JSON.parse(jsonText);
+          onTranslateSuccess({ success: true, data: parsed });
+
+          // 비동기로 'inEnglish' 구글 시트에 학생 검색 히스토리 누적 기록 (fire-and-forget)
+          try {
+            const logUrl = `${GAS_WEBAPP_URL}?action=translate&grade=${payload.grade}&text=${encodeURIComponent(payload.text)}`;
+            fetch(logUrl, { mode: 'no-cors' }).catch(()=>{});
+          } catch(e) {}
+        } catch(e) {
+          showError('응답 처리 중 오류: ' + e.message);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        showError('Gemini API 호출 중 오류: ' + err.message);
+        setLoading(false);
+      });
+    }
+
+    function onTranslateSuccess(response) {
+      setLoading(false);
+      if (!response.success) {
+        if (response.needApiKey) {
+          openApiKeyModal();
+        }
+        showError(response.error || '번역을 완료하지 못했습니다.');
+        return;
+      }
+
+      renderResult(response.data);
+    }
+
+    function onTranslateFailure(error) {
+      setLoading(false);
+      showError('서버 통신 중 오류가 발생했습니다: ' + (error.message || error));
+    }
+
+    /**
+     * 결과 렌더링
+     */
+    function renderResult(data) {
+      lastResultObj = data;
+      const section = document.getElementById('resultSection');
+      const idlePlaceholder = document.getElementById('idlePlaceholder');
+      if (idlePlaceholder) idlePlaceholder.classList.add('hidden');
+      section.classList.remove('hidden');
+
+      // 학년 배지 (방향에 따라 유연하게 표기)
+      let badgeLabel = `${data.grade}학년 맞춤 표현 ✨`;
+      if (data.direction === 'mixed-to-en') {
+        badgeLabel = `${data.grade}학년 스마트 완성 ✨`;
+      }
+      document.getElementById('resultGradeBadge').textContent = badgeLabel;
+
+      // 캐시 배지
+      const cacheBadge = document.getElementById('cacheBadge');
+      cacheBadge.classList.toggle('hidden', !data.isCached);
+
+      // 메인 번역 문장
+      const resultTextEl = document.getElementById('resultText');
+      resultTextEl.textContent = data.translation;
+
+      // 발음 가이드 (IPA 국제음성기호 표기 - 영어 결과일 때만 표시)
+      const pronGuideEl = document.getElementById('pronunciationGuide');
+      const ipaTextEl = document.getElementById('ipaSymbolText');
+      if (data.pronunciation && (data.direction === 'ko-to-en' || data.direction === 'mixed-to-en')) {
+        if (ipaTextEl) {
+          ipaTextEl.textContent = data.pronunciation;
+        }
+        pronGuideEl.classList.remove('hidden');
+      } else {
+        pronGuideEl.classList.add('hidden');
+      }
+
+      // 선생님 팁
+      const tipBox = document.getElementById('tipBox');
+      if (data.tip) {
+        document.getElementById('tipText').textContent = data.tip;
+        tipBox.classList.remove('hidden');
+      } else {
+        tipBox.classList.add('hidden');
+      }
+
+      // 핵심 어휘 칩
+      const keyWordsList = document.getElementById('keyWordsList');
+      keyWordsList.innerHTML = '';
+      if (data.keyWords && data.keyWords.length > 0) {
+        data.keyWords.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'px-3 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200/80';
+          chip.innerHTML = `<span class="text-brand-600 font-en font-extrabold">${item.word}</span> <span class="text-slate-500 font-normal">(${item.meaning})</span>`;
+          keyWordsList.appendChild(chip);
+        });
+        document.getElementById('keyWordsContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('keyWordsContainer').classList.add('hidden');
+      }
+
+      // 스크롤 자동 이동 (태블릿 편의성)
+      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /**
+     * =========================================
+     * 음성 출력 (TTS - Text to Speech) 기능
+     * =========================================
+     */
+    let loadedVoices = [];
+    function initVoices() {
+      if ('speechSynthesis' in window) {
+        loadedVoices = window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          loadedVoices = window.speechSynthesis.getVoices();
+        };
+      }
+    }
+    initVoices();
+
+    function speakResult() {
+      if (!lastResultObj || !lastResultObj.translation) return;
+
+      if (!('speechSynthesis' in window)) {
+        alert('현재 브라우저에서는 음성 출력을 지원하지 않습니다.');
+        return;
+      }
+
+      window.speechSynthesis.cancel(); // 이전 재생 중단
+
+      const text = lastResultObj.translation;
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      const isEnglish = (lastResultObj.direction === 'ko-to-en' || lastResultObj.direction === 'mixed-to-en');
+      utterance.lang = isEnglish ? 'en-US' : 'ko-KR';
+
+      // 자연스러운 고품질 신경망/구글 음성 자동 선택 (기계음 퇴출)
+      if (loadedVoices.length === 0) {
+        loadedVoices = window.speechSynthesis.getVoices();
+      }
+
+      if (isEnglish) {
+        // 영어: Google US English 또는 Natural / Jenny / Guy 음성 우선 선택
+        const naturalVoice = loadedVoices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Jenny') || v.name.includes('Aria') || v.name.includes('Guy')));
+        if (naturalVoice) {
+          utterance.voice = naturalVoice;
+        } else {
+          const fallback = loadedVoices.find(v => v.lang.startsWith('en'));
+          if (fallback) utterance.voice = fallback;
+        }
+      } else {
+        // 한국어: Google 한국어 또는 Natural 음성 우선 선택
+        const naturalKoVoice = loadedVoices.find(v => v.lang.startsWith('ko') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('SunHi') || v.name.includes('Heami')));
+        if (naturalKoVoice) {
+          utterance.voice = naturalKoVoice;
+        } else {
+          const fallbackKo = loadedVoices.find(v => v.lang.startsWith('ko'));
+          if (fallbackKo) utterance.voice = fallbackKo;
+        }
+      }
+
+      // 속도 차이를 확실하게 체감되도록 조정: 보통 1.0 vs 천천히 0.6
+      utterance.pitch = 1.0;
+      utterance.rate = ttsSlow ? 0.6 : 1.0;
+
+      const speakBtn = document.getElementById('speakBtn');
+      if (speakBtn) speakBtn.classList.add('scale-95', 'opacity-75');
+
+      utterance.onend = () => {
+        if (speakBtn) speakBtn.classList.remove('scale-95', 'opacity-75');
+      };
+      utterance.onerror = () => {
+        if (speakBtn) speakBtn.classList.remove('scale-95', 'opacity-75');
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleTtsSpeed() {
+      ttsSlow = !ttsSlow;
+      const btn = document.getElementById('ttsSpeedBtn');
+      if (ttsSlow) {
+        btn.textContent = "🐢 천천히 (0.6x)";
+        btn.className = "text-xs px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-extrabold btn-bounce";
+      } else {
+        btn.textContent = "⚡ 보통 (1.0x)";
+        btn.className = "text-xs px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-bold btn-bounce";
+      }
+      speakResult();
+    }
+
+    /**
+     * 결과 클립보드 복사
+     */
+    function copyResult() {
+      if (!lastResultObj || !lastResultObj.translation) return;
+
+      navigator.clipboard.writeText(lastResultObj.translation).then(() => {
+        const copyText = document.getElementById('copyText');
+        const copyIcon = document.getElementById('copyIcon');
+        copyText.textContent = "완료! 👍";
+        copyIcon.textContent = "✅";
+
+        setTimeout(() => {
+          copyText.textContent = "복사";
+          copyIcon.textContent = "📋";
+        }, 1800);
+      }).catch(err => {
+        showError('복사에 실패했습니다.');
+      });
+    }
+
+    /**
+     * 전자칠판 큰 글씨 모드 토글 (녹색 칠판 테마 & 분필 특대형 폰트 전환)
+     */
+    function toggleBoardMode() {
+      isBoardMode = !isBoardMode;
+      const boardBtn = document.getElementById('boardModeBtn');
+      const boardText = document.getElementById('boardModeText');
+      const idleH2 = document.querySelector('#idlePlaceholder h2');
+      const idleP = document.querySelector('#idlePlaceholder p');
+
+      document.body.classList.toggle('board-mode-active', isBoardMode);
+
+      if (isBoardMode) {
+        boardBtn.className = "flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300 btn-bounce";
+        boardText.textContent = "칠판 모드 ON";
+        if (idleH2) idleH2.textContent = "🖥️ 전자칠판 모드가 켜졌습니다!";
+        if (idleP) idleP.textContent = "교실 TV나 전자칠판에서 뒤쪽 학생까지 시원하게 보이는 대형 분필 글씨로 번역됩니다.";
+      } else {
+        boardBtn.className = "flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 btn-bounce";
+        boardText.textContent = "칠판 모드";
+        if (idleH2) idleH2.textContent = "교과서 맞춤 대답이 여기에 나타나요";
+        if (idleP) idleP.textContent = "왼쪽에서 학년을 고르고 말을 입력하거나 마이크 🎙️를 눌러보세요. 2022 개정 교육과정 수준에 딱 맞추어 번역해 드려요!";
+      }
+    }
+
+    /**
+     * UI 헬퍼
+     */
+    function setLoading(isLoading) {
+      const btn = document.getElementById('translateBtn');
+      const spinner = document.getElementById('btnSpinner');
+      const icon = document.getElementById('btnIcon');
+      const text = document.getElementById('btnText');
+
+      if (isLoading) {
+        btn.disabled = true;
+        spinner.classList.remove('hidden');
+        icon.classList.add('hidden');
+        text.textContent = '번역 중...';
+      } else {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        icon.classList.remove('hidden');
+        text.textContent = '번역하기';
+      }
+    }
+
+    function showError(msg) {
+      const card = document.getElementById('errorCard');
+      document.getElementById('errorMessage').textContent = msg;
+      card.classList.remove('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('errorCard').classList.add('hidden');
+    }
+
+    /**
+     * API 키 모달
+     */
+    function openApiKeyModal() {
+      document.getElementById('apiKeyModal').classList.remove('hidden');
+    }
+    function closeApiKeyModal() {
+      document.getElementById('apiKeyModal').classList.add('hidden');
+    }
+    function saveApiKey() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (key) {
+        localStorage.setItem('IN_ENGLISH_API_KEY', key);
+        alert('API 키가 브라우저에 안전하게 저장되었습니다! ✨');
+      } else {
+        localStorage.removeItem('IN_ENGLISH_API_KEY');
+        alert('API 키가 초기화되었습니다. Apps Script 기본 설정을 사용합니다.');
+      }
+      closeApiKeyModal();
+    }
+
+    /**
+     * 로컬 독립 실행 시 시뮬레이션용 목(Mock) 데이터
+     */
+    function simulateLocalResponse(payload) {
+      setLoading(false);
+      const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(payload.text);
+      
+      let mock;
+      if (isKorean) {
+        mock = {
+          direction: "ko-to-en",
+          translation: payload.grade <= 4 ? "Can I go to the bathroom?" : "May I please go to the restroom?",
+          grade: payload.grade,
+          curriculumLevel: `${payload.grade}학년 맞춤 어휘`,
+          pronunciation: "/kæn aɪ ɡoʊ tu ðə ˈbæθruːm/",
+          tip: "선생님께 공손하게 화장실 이용 허락을 구할 때 사용하는 2022 개정 교육과정 필수 표현이에요!",
+          keyWords: [
+            { word: "go", meaning: "가다" },
+            { word: "bathroom", meaning: "화장실" }
+          ]
+        };
+      } else {
+        mock = {
+          direction: "en-to-ko",
+          translation: "화장실에 가도 될까요?",
+          grade: payload.grade,
+          curriculumLevel: `${payload.grade}학년 맞춤 어휘`,
+          pronunciation: "",
+          tip: "선생님이나 친구의 질문에 친절하게 대답하는 표현이에요.",
+          keyWords: [
+            { word: "bathroom", meaning: "화장실" }
+          ]
+        };
+      }
+      renderResult(mock);
+    }
+  </script>
+
+</body>
+</html>
+
