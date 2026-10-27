@@ -150,7 +150,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen md:h-screen md:max-h-[100dvh] text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-x-hidden md:overflow-hidden bg-slate-50">
+<body class="min-h-screen md:h-screen text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-x-hidden overflow-y-auto bg-slate-50">
 
   <!-- ===============================
        상단 내비게이션 바 (슬림 & 깔끔)
@@ -197,14 +197,14 @@
   <!-- ===============================
        메인 컨텐츠 영역: 태블릿 가로모드(md:) 좌우 2열 분할 레이아웃
   =============================== -->
-  <main class="w-full px-3 sm:px-6 lg:px-8 py-2 flex-1 min-h-0 flex flex-col overflow-hidden">
+  <main class="w-full px-3 sm:px-6 lg:px-8 py-1.5 flex-1 min-h-0 flex flex-col overflow-y-auto">
     
-    <div class="grid grid-cols-1 md:grid-cols-10 gap-2.5 sm:gap-3 flex-1 min-h-0 h-full">
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-2 sm:gap-2.5 flex-1 min-h-0">
 
       <!-- ===========================
            [좌측 칼럼] 입력 & 학년 선택 (30% 가로 배정 - 3:7 비율)
       ============================ -->
-      <div class="md:col-span-3 flex flex-col space-y-1.5 h-full min-h-0 overflow-hidden">
+      <div class="md:col-span-3 flex flex-col space-y-1.5 min-h-0">
         
         <!-- 1. 알약형 학년 선택 탭 (컴팩트 & 원클릭 동기화) -->
         <section class="bg-white rounded-2xl p-2 sm:p-2.5 shadow-card border border-slate-100 flex-none">
@@ -318,10 +318,10 @@
       <!-- ===========================
            [우측 칼럼] 대답 패널 (7칸 배정 - 스크롤 없이 한눈에!)
       ============================ -->
-      <div class="md:col-span-7 flex flex-col h-full min-h-0 overflow-hidden">
+      <div class="md:col-span-7 flex flex-col min-h-0">
         
         <!-- 대기 상태 (번역 전 플레이스홀더) -->
-        <section id="idlePlaceholder" class="bg-white rounded-2xl p-4 sm:p-5 shadow-card border border-slate-100 h-full flex flex-col items-center justify-center text-center space-y-2">
+        <section id="idlePlaceholder" class="bg-white rounded-2xl p-4 sm:p-5 shadow-card border border-slate-100 min-h-[300px] flex-1 flex flex-col items-center justify-center text-center space-y-2">
           <div class="w-12 h-12 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-2xl">
             🎒
           </div>
@@ -334,7 +334,7 @@
         </section>
 
         <!-- 번역 결과 카드 (번역 완료 시 표시) -->
-        <section id="resultSection" class="hidden bg-white rounded-2xl p-3 sm:p-3.5 shadow-card-lg border-2 border-indigo-100 h-full flex flex-col min-h-0 overflow-hidden">
+        <section id="resultSection" class="hidden bg-white rounded-2xl p-3 sm:p-3.5 shadow-card-lg border-2 border-indigo-100 flex-1 flex flex-col min-h-0">
           
           <!-- 카드 헤더: 학년 레벨 태그 + 발음/복사 컨트롤 (절대 스크롤되지 않는 영구 상단 고정 헤더!) -->
           <div class="flex items-center justify-between border-b border-slate-100 pb-2 flex-none bg-white">
@@ -370,11 +370,11 @@
           </div>
 
           <!-- 스크롤 가능 내용 영역: 번역 문장 + 발음기호 + 팁 + 단어장 -->
-          <div class="flex-1 overflow-y-auto flex flex-col justify-between py-1.5 space-y-1.5 min-h-0" id="resultScrollBody">
+          <div class="flex-1 overflow-y-auto flex flex-col py-1.5 space-y-2 min-h-0" id="resultScrollBody">
             <!-- 메인 번역 문장 출력부 -->
-            <div class="py-1 flex-1 flex flex-col justify-center min-h-0">
+            <div class="py-1 flex flex-col justify-center min-h-0">
               <p id="resultText" 
-                class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all">
+                class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all">
                 <!-- 번역 결과 텍스트 -->
               </p>
 
