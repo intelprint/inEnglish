@@ -47,6 +47,15 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // GitHub Pages 등 외부 프론트엔드에서 구글 시트 원클릭 열기 요청 시 (새 탭 리다이렉트)
+  if (e && e.parameter && e.parameter.action === 'openSheet') {
+    var sRes = getHistorySheetUrl();
+    if (sRes && sRes.success && sRes.url) {
+      return HtmlService.createHtmlOutput('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=' + sRes.url + '"><script>location.href="' + sRes.url + '";<\/script></head><body><p style="font-family:sans-serif;padding:20px;">구글 시트(inEnglish)로 이동하는 중입니다...</p></body></html>');
+    }
+    return ContentService.createTextOutput('구글 시트 조회 오류: ' + (sRes.error || '알 수 없음'));
+  }
+
   // GitHub Pages 등 외부 프론트엔드에서 GET 호출 시 번역 지원 (CORS 프리)
   if (e && e.parameter && e.parameter.action === 'translate' && e.parameter.text) {
     var getPayload = {
