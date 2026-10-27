@@ -1073,20 +1073,8 @@
           }
         }).getHistorySheetUrl();
       } else {
-        // GitHub Pages 등 외부 웹 환경: GAS 백엔드를 통해 안전하게 시트 URL 조회 및 새 탭 오픈
-        const fetchUrl = `${GAS_WEBAPP_URL}?action=getSheetUrl`;
-        fetch(fetchUrl)
-          .then(res => res.json())
-          .then(res => {
-            if (res && res.success && res.url) {
-              window.open(res.url, '_blank');
-            } else {
-              alert('구글 시트 URL을 조회하지 못했습니다: ' + (res.error || '잠시 후 다시 시도해주세요.'));
-            }
-          })
-          .catch(err => {
-            alert('구글 시트 연결 중 오류가 발생했습니다: ' + err.message);
-          });
+        // GitHub Pages 등 외부 웹 환경: GAS openSheet 엔드포인트로 새 탭에서 즉시 시트 오픈
+        window.open(`${GAS_WEBAPP_URL}?action=openSheet`, '_blank');
       }
     }
 
