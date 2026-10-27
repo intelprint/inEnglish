@@ -722,8 +722,7 @@
 
     /**
      * 마이크 버튼 클릭 시 음성 인식 실행
-     * - GitHub Pages / 태블릿: 새 창/새 탭 없이 화면 내 인라인 모달로 음성 인식
-     * - GAS iframe 내부: 모달 실행 후 브라우저 정책 차단 시 독립 팝업 창 연동
+     * - 학생용 태블릿 및 일반 웹 환경에서는 새 창/팝업 없이 화면 내부 모달(대화창)로 즉시 실행
      */
     function toggleSpeechRecognition() {
       openVoiceModal(speechLang);
