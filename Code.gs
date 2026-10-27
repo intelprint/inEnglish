@@ -82,7 +82,8 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  return HtmlService.createHtmlOutputFromFile('index')
+  var template = HtmlService.createTemplateFromFile('index');
+  return template.evaluate()
     .setTitle('inEnglish 🎒 초등 3~6학년 교과서 맞춤 AI 번역기')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
