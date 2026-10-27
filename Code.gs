@@ -59,12 +59,14 @@ function doGet(e) {
   // GitHub Pages 등 외부 프론트엔드에서 번역 완료 후 히스토리 직접 기록 요청 시 (CORS 프리)
   if (e && e.parameter && e.parameter.action === 'logHistory') {
     var lGrade = parseInt(e.parameter.grade, 10) || 3;
-    var lText = decodeURIComponent(e.parameter.text || '');
-    var lTrans = decodeURIComponent(e.parameter.translation || '');
+    var lText = e.parameter.text || '';
+    try { lText = decodeURIComponent(lText); } catch(err) {}
+    var lTrans = e.parameter.translation || '';
+    try { lTrans = decodeURIComponent(lTrans); } catch(err) {}
     var lDir = e.parameter.direction || 'ko-to-en';
     var lModel = e.parameter.model || 'gemini-3.8-flash';
-    logTranslationToSheet(lGrade, lText, lTrans, lDir, lModel);
-    return ContentService.createTextOutput(JSON.stringify({ success: true }))
+    var logRes = logTranslationToSheet(lGrade, lText, lTrans, lDir, lModel);
+    return ContentService.createTextOutput(JSON.stringify(logRes || { success: true }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 
@@ -393,19 +395,26 @@ function logTranslationToSheet(grade, text, translation, direction, modelName) {
   try {
     var props = PropertiesService.getScriptProperties();
     var sheetId = props.getProperty('HISTORY_SHEET_ID') || DEFAULT_HISTORY_SHEET_ID;
-    var ss = null;
+    if (!sheetId) return { success: false, error: '시트 ID가 설정되지 않았습니다.' };
 
-    if (sheetId) {
-      try {
-        ss = SpreadsheetApp.openById(sheetId);
-      } catch (e) {
-        ss = null;
+    var ss = SpreadsheetApp.openById(sheetId);
+    if (!ss) return { success: false, error: '스프레드시트를 열 수 없습니다.' };
+
+    var logSheet = ss.getSheetByName('번역기록');
+    if (!logSheet) {
+      logSheet = ss.getActiveSheet();
+      if (logSheet) {
+        try { logSheet.setName('번역기록'); } catch(e) {}
       }
     }
+    if (logSheet && logSheet.getLastRow() === 0) {
+      logSheet.appendRow(['일시 (날짜 및 시간)', '학년', '입력 내용 (한글/영어)', '번역 결과', '번역 방향', '사용 AI 모델']);
+      try {
+        logSheet.getRange(1, 1, 1, 6).setBackground('#4338ca').setFontColor('#ffffff').setFontWeight('bold');
+        logSheet.setFrozenRows(1);
+      } catch(e) {}
+    }
 
-    if (!ss) return;
-
-    var logSheet = ss.getSheetByName('번역기록') || ss.getActiveSheet();
     var nowStr = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
     logSheet.appendRow([
       nowStr,
@@ -415,8 +424,10 @@ function logTranslationToSheet(grade, text, translation, direction, modelName) {
       direction || 'ko-to-en',
       modelName || 'gemini-3.8-flash'
     ]);
+    return { success: true, timestamp: nowStr };
   } catch (err) {
     Logger.log('logTranslationToSheet notice: ' + err.toString());
+    return { success: false, error: err.toString() };
   }
 }
 
