@@ -150,7 +150,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 md:h-screen md:overflow-hidden bg-slate-50">
+<body class="h-screen h-[100dvh] max-h-[100dvh] text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-hidden bg-slate-50">
 
   <!-- ===============================
        상단 내비게이션 바 (슬림 & 깔끔)
@@ -197,14 +197,14 @@
   <!-- ===============================
        메인 컨텐츠 영역: 태블릿 가로모드(md:) 좌우 2열 분할 레이아웃
   =============================== -->
-  <main class="w-full px-3 sm:px-6 lg:px-8 py-2 sm:py-3 flex-1 flex flex-col md:h-[calc(100vh-52px)] md:overflow-hidden">
+  <main class="w-full px-3 sm:px-6 lg:px-8 py-2 flex-1 min-h-0 flex flex-col overflow-hidden">
     
-    <div class="grid grid-cols-1 md:grid-cols-10 gap-3 sm:gap-4 flex-1 h-full min-h-0">
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-2.5 sm:gap-3 flex-1 min-h-0 h-full">
 
       <!-- ===========================
            [좌측 칼럼] 입력 & 학년 선택 (30% 가로 배정 - 3:7 비율)
       ============================ -->
-      <div class="md:col-span-3 flex flex-col space-y-2 h-full min-h-0">
+      <div class="md:col-span-3 flex flex-col space-y-1.5 h-full min-h-0 overflow-hidden">
         
         <!-- 1. 알약형 학년 선택 탭 (컴팩트 & 원클릭 동기화) -->
         <section class="bg-white rounded-2xl p-2 sm:p-2.5 shadow-card border border-slate-100 flex-none">
@@ -248,7 +248,7 @@
         </section>
 
         <!-- 2. 스마트 입력 카드 (상하 여백 낭비 없이 꽉 채움) -->
-        <section class="bg-white rounded-2xl p-3 sm:p-3.5 shadow-card border border-slate-100 flex-1 flex flex-col min-h-0 justify-between space-y-2">
+        <section class="bg-white rounded-2xl p-2.5 sm:p-3 shadow-card border border-slate-100 flex-1 flex flex-col min-h-0 justify-between gap-1 overflow-hidden">
           
           <!-- 감지 배지 & 지우기 -->
           <div class="flex items-center justify-between flex-none">
@@ -265,19 +265,19 @@
           </div>
 
           <!-- 메인 텍스트 입력창 (높이 균형 최적화) -->
-          <div class="relative flex-1 min-h-[75px] sm:min-h-[90px] flex flex-col">
+          <div class="relative flex-1 min-h-[45px] sm:min-h-[55px] flex flex-col">
             <textarea id="inputText" 
               placeholder="번역하고 싶은 말을 입력하거나, 아래 마이크 🎙️를 눌러 말씀하세요!"
               oninput="handleInputTextChange()"
               onkeydown="handleKeyDown(event)"
-              class="w-full h-full flex-1 p-3 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none transition-all placeholder:text-slate-400 resize-none font-medium text-slate-900 leading-relaxed text-sm sm:text-base"></textarea>
+              class="w-full h-full flex-1 p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none transition-all placeholder:text-slate-400 resize-none font-medium text-slate-900 leading-relaxed text-sm"></textarea>
           </div>
 
           <!-- 액션 바: 마이크 + 번역 버튼 -->
-          <div class="flex items-center justify-between gap-1.5 flex-none pt-0.5">
+          <div class="flex items-center justify-between gap-1 flex-none pt-0.5">
             <div class="flex items-center space-x-1.5">
               <button type="button" id="micBtn" onclick="toggleSpeechRecognition()"
-                class="flex items-center space-x-1 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs btn-bounce">
+                class="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs btn-bounce">
                 <span class="text-base">🎙️</span>
                 <span>말하기</span>
               </button>
@@ -291,7 +291,7 @@
             </div>
 
             <button type="button" id="translateBtn" onclick="requestTranslation()"
-              class="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-pill btn-bounce">
+              class="flex items-center justify-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-pill btn-bounce">
               <span id="btnSpinner" class="hidden animate-spin">⏳</span>
               <span id="btnIcon">✨</span>
               <span id="btnText">번역하기</span>
@@ -299,8 +299,8 @@
           </div>
 
           <!-- 교실 추천 꿀표현 칩 -->
-          <div class="pt-1.5 border-t border-slate-100 flex-none">
-            <div class="text-[10px] font-bold text-slate-400 mb-1 flex items-center space-x-1">
+          <div class="pt-1 border-t border-slate-100 flex-none">
+            <div class="text-[10px] font-bold text-slate-400 mb-0.5 flex items-center space-x-1">
               <span>💡</span>
               <span>교실 자주 쓰는 꿀표현:</span>
             </div>
@@ -316,26 +316,26 @@
       <!-- ===========================
            [우측 칼럼] 대답 패널 (7칸 배정 - 스크롤 없이 한눈에!)
       ============================ -->
-      <div class="md:col-span-7 flex flex-col h-full min-h-0">
+      <div class="md:col-span-7 flex flex-col h-full min-h-0 overflow-hidden">
         
         <!-- 대기 상태 (번역 전 플레이스홀더) -->
-        <section id="idlePlaceholder" class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 h-full flex flex-col items-center justify-center text-center space-y-3">
-          <div class="w-14 h-14 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-3xl">
+        <section id="idlePlaceholder" class="bg-white rounded-2xl p-4 sm:p-5 shadow-card border border-slate-100 h-full flex flex-col items-center justify-center text-center space-y-2">
+          <div class="w-12 h-12 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-2xl">
             🎒
           </div>
           <div>
-            <h2 class="text-base font-extrabold text-slate-800">교과서 맞춤 대답이 여기에 나타나요</h2>
-            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-800">교과서 맞춤 대답이 여기에 나타나요</h2>
+            <p class="text-xs text-slate-500 mt-0.5 max-w-xs mx-auto leading-relaxed">
               왼쪽에서 학년을 고르고 말을 입력하거나 마이크 🎙️를 눌러보세요. 2022 개정 교육과정 수준에 딱 맞추어 번역해 드려요!
             </p>
           </div>
         </section>
 
         <!-- 번역 결과 카드 (번역 완료 시 표시) -->
-        <section id="resultSection" class="hidden bg-white rounded-2xl p-3 sm:p-4 shadow-card-lg border-2 border-indigo-100 h-full flex flex-col min-h-0">
+        <section id="resultSection" class="hidden bg-white rounded-2xl p-3 sm:p-3.5 shadow-card-lg border-2 border-indigo-100 h-full flex flex-col min-h-0 overflow-hidden">
           
           <!-- 카드 헤더: 학년 레벨 태그 + 발음/복사 컨트롤 (절대 스크롤되지 않는 영구 상단 고정 헤더!) -->
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 flex-none bg-white">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2 flex-none bg-white">
             <div class="flex items-center space-x-1.5">
               <span id="resultGradeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-100 text-brand-700">
                 3학년 맞춤 표현 ✨
@@ -368,17 +368,17 @@
           </div>
 
           <!-- 스크롤 가능 내용 영역: 번역 문장 + 발음기호 + 팁 + 단어장 -->
-          <div class="flex-1 overflow-y-auto flex flex-col justify-between py-2 space-y-2 min-h-0" id="resultScrollBody">
+          <div class="flex-1 overflow-y-auto flex flex-col justify-between py-1.5 space-y-1.5 min-h-0" id="resultScrollBody">
             <!-- 메인 번역 문장 출력부 -->
-            <div class="py-2 flex-1 flex flex-col justify-center min-h-0">
+            <div class="py-1 flex-1 flex flex-col justify-center min-h-0">
               <p id="resultText" 
-                class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all">
+                class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all">
                 <!-- 번역 결과 텍스트 -->
               </p>
 
               <!-- 국제음성기호(IPA) 정확한 발음 표기 (한글 발음 완전 제거) -->
-              <div id="pronunciationGuide" class="mt-2.5 flex items-center">
-                <span class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold font-mono text-indigo-700 bg-indigo-50/90 border border-indigo-100 px-3 py-1 rounded-xl">
+              <div id="pronunciationGuide" class="mt-2 flex items-center">
+                <span class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold font-mono text-indigo-700 bg-indigo-50/90 border border-indigo-100 px-3 py-0.5 rounded-xl">
                   <span>🔤 발음기호:</span>
                   <span id="ipaSymbolText" class="tracking-wide"></span>
                 </span>
@@ -386,14 +386,14 @@
             </div>
 
             <!-- 교실 친절 팁 -->
-            <div id="tipBox" class="p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 font-medium flex items-start space-x-1.5 flex-none">
+            <div id="tipBox" class="p-2 sm:p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 font-medium flex items-start space-x-1.5 flex-none">
               <span class="text-sm">👩‍🏫</span>
               <span id="tipText">선생님 팁이 여기에 표시됩니다.</span>
             </div>
 
             <!-- 교과서 쏙쏙 단어장 -->
-            <div id="keyWordsContainer" class="pt-2 border-t border-slate-100 flex-none">
-              <div class="text-[11px] font-bold text-slate-400 mb-1.5 flex items-center space-x-1">
+            <div id="keyWordsContainer" class="pt-1.5 border-t border-slate-100 flex-none">
+              <div class="text-[11px] font-bold text-slate-400 mb-1 flex items-center space-x-1">
                 <span>📖</span>
                 <span>교과서 핵심 어휘:</span>
               </div>
