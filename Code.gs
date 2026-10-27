@@ -68,8 +68,7 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  var template = HtmlService.createTemplateFromFile('index');
-  return template.evaluate()
+  return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('inEnglish 🎒 초등 3~6학년 교과서 맞춤 AI 번역기')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -376,10 +375,12 @@ function requestGeminiModel(modelName, apiVersion, apiKey, systemInstruction, us
  * 교사용 구글 스프레드시트 ('inEnglish') 검색 히스토리 누적 기록
  * ========================================================
  */
+var DEFAULT_HISTORY_SHEET_ID = '1zRyXVFaCxraQ4MxxmwX1JWJfAo9N802X2YBUruCw6OI';
+
 function logTranslationToSheet(grade, text, translation, direction, modelName) {
   try {
     var props = PropertiesService.getScriptProperties();
-    var sheetId = props.getProperty('HISTORY_SHEET_ID');
+    var sheetId = props.getProperty('HISTORY_SHEET_ID') || DEFAULT_HISTORY_SHEET_ID;
     var ss = null;
 
     if (sheetId) {
@@ -390,21 +391,7 @@ function logTranslationToSheet(grade, text, translation, direction, modelName) {
       }
     }
 
-    // 시트가 없으면 'inEnglish' 이름으로 신규 생성
-    if (!ss) {
-      ss = SpreadsheetApp.create('inEnglish');
-      sheetId = ss.getId();
-      props.setProperty('HISTORY_SHEET_ID', sheetId);
-
-      var sheet = ss.getActiveSheet();
-      sheet.setName('번역기록');
-      sheet.appendRow(['일시 (날짜 및 시간)', '학년', '입력 내용 (한글/영어)', '번역 결과', '번역 방향', '사용 AI 모델']);
-      sheet.getRange(1, 1, 1, 6)
-        .setBackground('#4338ca')
-        .setFontColor('#ffffff')
-        .setFontWeight('bold');
-      sheet.setFrozenRows(1);
-    }
+    if (!ss) return;
 
     var logSheet = ss.getSheetByName('번역기록') || ss.getActiveSheet();
     var nowStr = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
@@ -427,22 +414,10 @@ function logTranslationToSheet(grade, text, translation, direction, modelName) {
 function getHistorySheetUrl() {
   try {
     var props = PropertiesService.getScriptProperties();
-    var sheetId = props.getProperty('HISTORY_SHEET_ID');
-    if (sheetId) {
-      return { success: true, url: 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' };
-    }
-    // 시트가 아직 생성 전이면 생성 후 반환
-    var ss = SpreadsheetApp.create('inEnglish');
-    sheetId = ss.getId();
-    props.setProperty('HISTORY_SHEET_ID', sheetId);
-    var sheet = ss.getActiveSheet();
-    sheet.setName('번역기록');
-    sheet.appendRow(['일시 (날짜 및 시간)', '학년', '입력 내용 (한글/영어)', '번역 결과', '번역 방향', '사용 AI 모델']);
-    sheet.getRange(1, 1, 1, 6).setBackground('#4338ca').setFontColor('#ffffff').setFontWeight('bold');
-    sheet.setFrozenRows(1);
-    return { success: true, url: ss.getUrl() };
+    var sheetId = props.getProperty('HISTORY_SHEET_ID') || DEFAULT_HISTORY_SHEET_ID;
+    return { success: true, url: 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' };
   } catch(err) {
-    return { success: false, error: err.toString() };
+    return { success: true, url: 'https://docs.google.com/spreadsheets/d/' + DEFAULT_HISTORY_SHEET_ID + '/edit' };
   }
 }
 
