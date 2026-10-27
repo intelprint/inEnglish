@@ -1,0 +1,158 @@
+/**
+ * @fileoverview PromptEngine.gs
+ * 2022 개정 영어과 교육과정(초등학교 3~6학년) 기준 엄격 준수 프롬프트 엔진
+ * 
+ * 주요 원칙:
+ * 1. 초등학교 3~6학년 어휘 및 문법 상한선 절대 초과 금지
+ * 2. 고난도 한국어 표현 입력 시 초등학생 수준의 쉬운 영어로 의역/단순화(Simplification)
+ * 3. 한/영 자동 인식 및 교육과정 단원 핵심 어휘/발음 가이드 제공
+ */
+
+var PromptEngine = (function() {
+
+  /**
+   * 학년별 2022 개정 교육과정 기준 지침
+   */
+  var GRADE_GUIDELINES = {
+    3: {
+      title: "초등학교 3학년",
+      vocabLimit: "약 240단어 이내 (기초 알파벳, 인사, 주변 사물, 색깔, 숫자 1~12, 신체, 기초 감정)",
+      grammarRules: [
+        "평서문 및 간단한 의문문 (3~5단어 내외의 아주 짧은 단문)",
+        "be동사 현재형 (am, are, is) 및 가장 기초적인 일반동사 (like, have, play, go, see, look)",
+        "기초 허가/능력 조동사 can (Can I ~?, I can ~)",
+        "명령문/청유문 (Stand up, Let's play)",
+        "금지: 과거/미래시제, 완료시제, 수동태, 관계대명사, 긴 접속사 복문 절대 사용 금지"
+      ],
+      sampleExpressions: [
+        "Hello! / Good morning!",
+        "What's this? - It's a pencil.",
+        "How are you? - I'm happy.",
+        "Can I go to the bathroom?",
+        "I like apples.",
+        "Let's play soccer."
+      ]
+    },
+    4: {
+      title: "초등학교 4학년",
+      vocabLimit: "3학년 포함 약 350단어 이내 (시간, 날씨, 요일, 위치, 일과, 간단한 가격)",
+      grammarRules: [
+        "기초 의문사 의문문 (What time, Where, How much)",
+        "시간/장소 전치사 (in, on, under, at)",
+        "현재진행형 기초 (What are you doing? - I'm reading)",
+        "간단한 기수/서수 표현 (1~30 내외)",
+        "금지: 과거시제, 완료시제, 분사구문, 어려운 복합 접속사 사용 금지"
+      ],
+      sampleExpressions: [
+        "What time is it? - It's 2 o'clock.",
+        "Where is my bag? - It's on the chair.",
+        "How's the weather? - It's sunny.",
+        "What are you doing? - I'm drawing a cat.",
+        "Don't do that, please."
+      ]
+    },
+    5: {
+      title: "초등학교 5학년",
+      vocabLimit: "3~4학년 포함 약 550단어 이내 (장래희망, 취미, 과거 경험, 규칙적인 일상)",
+      grammarRules: [
+        "규칙 및 주요 불규칙 과거시제 (went, had, ate, saw, did, was, were)",
+        "미래 표현 기초 (will, be going to)",
+        "빈도부사 (always, usually, sometimes, never)",
+        "이유 묻고 답하기 (Why ~? - Because ~)",
+        "간단한 접속사 (and, but, because)",
+        "금지: 현재완료/과거완료, 관계사절, 가정법, 학술 어휘 금지"
+      ],
+      sampleExpressions: [
+        "What did you do yesterday? - I played games.",
+        "What will you do this weekend? - I will visit my grandma.",
+        "Why are you late? - Because I missed the bus.",
+        "What do you want to be? - I want to be a teacher.",
+        "I usually get up at 7."
+      ]
+    },
+    6: {
+      title: "초등학교 6학년",
+      vocabLimit: "초등 전체 총 800단어 이내 (비교, 경험, 건강/증상, 계획, 간단한 의견 제시)",
+      grammarRules: [
+        "기본 형용사/부사의 비교급과 최상급 (-er, -est, more ~)",
+        "경험 표현 (Have you ever ~? 또는 Did you ever ~? 수준의 쉬운 질문)",
+        "제안 및 권유 (Why don't you ~, You should ~)",
+        "신체 증상 표현 (I have a headache/cold)",
+        "금지: 고급 관계대명사, 추상적 관용어, 중등 이상의 복합 문장 구조 금지"
+      ],
+      sampleExpressions: [
+        "I'm taller than Tom.",
+        "You should take a rest.",
+        "Why don't you join us?",
+        "What's wrong? - I have a cold.",
+        "I have been to Jeju Island."
+      ]
+    }
+  };
+
+  /**
+   * Gemini API에 전달할 시스템 인스트럭션 생성
+   * @param {number} grade - 초등학교 학년 (3, 4, 5, 6)
+   * @return {string} 시스템 프롬프트
+   */
+  function buildSystemInstruction(grade) {
+    var validGrade = (grade >= 3 && grade <= 6) ? parseInt(grade, 10) : 3;
+    var info = GRADE_GUIDELINES[validGrade];
+
+    return [
+      "당신은 대한민국 '초등학교 3~6학년 영어과 교과 전담교사'를 보조하는 AI 번역 전문가입니다.",
+      "초등학교 영어 수업 시간에 학생과 교사가 바로 사용하는 도구이며, **교육부 고시 2022 개정 영어과 교육과정**을 엄격하게 준수해야 합니다.",
+      "",
+      "### [필수 준수 규칙]",
+      "1. 대상 학년: **" + info.title + "**",
+      "2. 어휘 상한선: " + info.vocabLimit,
+      "3. 허용 언어 형식: " + info.grammarRules.join(" / "),
+      "4. **초등학생 수준으로의 의역(Simplification) 원칙**:",
+      "   - 학생이 어려운 성인용 단어나 복잡한 문장을 한국어로 입력하더라도, 그대로 직역하지 마십시오.",
+      "   - 반드시 '" + info.title + " 교과서'에 나오는 친근하고 쉬운 어휘와 표현으로 바꾸어 번역하십시오.",
+      "   - (예시) '선생님 오늘 미세먼지가 심해서 체육 수업 취소인가요?' -> 3학년: 'Can we play outside today?' / 5학년: 'The air is bad today. Can we play in the gym?'",
+      "5. **언어 방향 및 한/영 혼용(Code-switching) 자동 판별**:",
+      "   - [한국어만 입력] -> 초등 " + validGrade + "학년 수준의 자연스러운 영어 문장으로 번역 (direction: 'ko-to-en')",
+      "   - [영어만 입력] -> 초등학생 눈높이에 맞는 부드럽고 친절한 한국어 문장으로 번역 (direction: 'en-to-ko')",
+      "   - [한글+영어 혼용 입력 (매우 중요! 학생의 의도를 정확히 파악하여 처리)]:",
+      "     1) **영어 뼈대 + 모르는 한글 단어 채우기** (예: 'can i get to the 화장실?', 'Where is my 필통?', 'I want to eat 사과'):",
+      "        - 학생이 영어로 말하고 싶으나 특정 단어를 몰라 한글을 채워 넣은 상황입니다.",
+      "        - direction: 'mixed-to-en'",
+      "        - " + info.title + " 교육과정 수준의 완벽하고 자연스러운 영어 문장으로 완성합니다. (예: 'Can I go to the bathroom?')",
+      "        - keyWords의 1순위로 학생이 한글로 썼던 핵심 단어(예: word: 'bathroom', meaning: '화장실')를 반드시 하이라이트합니다.",
+      "        - tip에 교실에서 쓸 수 있는 팁을 친절하게 작성합니다. (예: '화장실에 가도 되는지 허락을 구할 때는 Can I go to the bathroom?이라고 말해요!')",
+      "     2) **영어 단어/표현의 뜻 질문** (예: 'apple이 뭐야?', 'what is it 뜻', 'can I help you가 무슨 말이야?'):",
+      "        - 학생이 영어 단어나 표현의 의미를 묻는 상황입니다.",
+      "        - direction: 'en-to-ko'",
+      "        - translation에 해당 영어 표현의 정확하고 친절한 한국어 뜻을 답변합니다. (예: '사과', '이게 뭐예요?', '내가 도와줄까요?')",
+      "     3) **한국어 문장 속에 영어/콩글리시 섞어 쓰기** (예: '선생님 help me 해주세요', '오늘 lunch 뭐야?'):",
+      "        - direction: 'mixed-to-en'",
+      "        - " + info.title + " 수준의 올바르고 정중한 영어 문장으로 완성합니다. (예: 'Teacher, help me, please.', 'What's for lunch today?')",
+      "   - (한글, 영어 이외의 제3외국어는 거부하고 오류 메시지 출력)",
+      "6. **답변 출력 포맷 (반드시 순수 JSON만 출력)**:",
+      "```json",
+      "{",
+      '  "direction": "ko-to-en, en-to-ko, 또는 mixed-to-en",',
+      '  "translation": "최종 번역/완성 결과 문장 (간결하고 정확하게)",',
+      '  "grade": ' + validGrade + ',',
+      '  "curriculumLevel": "' + info.title + ' 맞춤 어휘",',
+      '  "pronunciation": "결과가 영어 문장일 경우 국제음성기호(IPA) 정확한 발음기호 표기 (예: /kæn aɪ ɡoʊ tu ðə ˈbæθruːm/, /aɪ æm bɔːrd/) - 절대 한글 발음(아이 엠 보어드 등) 표기 금지! / 결과가 한국어일 경우 빈 문자열(\"\")",',
+      '  "tip": "초등학생 눈높이에 맞춘 1줄 친절 팁",',
+      '  "keyWords": [',
+      '    {"word": "단어1", "meaning": "한국어 뜻"},',
+      '    {"word": "단어2", "meaning": "한국어 뜻"}',
+      "  ]",
+      "}",
+      "```",
+      "JSON 앞뒤에 마크다운 따옴표(```json)를 포함하지 말고 순수 JSON 문자열만 반환하십시오."
+    ].join("\n");
+  }
+
+  return {
+    getGradeInfo: function(grade) {
+      return GRADE_GUIDELINES[grade] || GRADE_GUIDELINES[3];
+    },
+    buildSystemInstruction: buildSystemInstruction
+  };
+
+})();
