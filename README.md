@@ -1,2 +1,16 @@
-# inEnglish ( 익귰뢬시 톥톥 )
-## 초등 3~6학진 2022 개정애어과 국육과정 맛취 AI 번역기
+# inEnglish
+
+초등학교 3~6학년 영어 수업용 한·영 번역 앱입니다.
+
+**[inEnglish 열기](https://script.google.com/macros/s/AKfycbwDCEniHKnDOtzfWSqe-A_yzLGIcwL75emoHsjHXLToCYCfb0t0LNPCTdsOXY4nBMIujg/exec)**
+
+현재 운영: GAS v3.0.1 / Apps Script 버전 23. 학생은 API 키나 Google 로그인 없이 사용합니다. GitHub Pages는 위 GAS 앱으로 이동합니다.
+
+- 학년별 쉬운 번역, 한·영 혼합 문장 완성, 영어 표현 뜻 질문
+- 음성 입력·직접 수정, IPA, 발음 듣기·속도 조절, 복사, 칠판 모드
+- 서버 API 키 보관, 요청 제한, 안전한 단일 검색 기록
+
+GAS의 `index`에 넣을 파일은 **[gas/index.html](gas/index.html)** 입니다. 저장소 루트의 `index.html`은 Pages 이동 안내입니다.
+서버 소스는 `Code.gs`, `PromptEngine.gs`, `appsscript.json`, 화면 동작 원본은 `Client.js`입니다.
+
+배포·운영 방법은 [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)를 참고하세요.

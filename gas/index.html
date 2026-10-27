@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>inEnglish 🎒 초등 3~6학년 교과서 맞춤 AI 번역기</title>
+  
+  <!-- Tailwind CSS CDN -->
+  
+  
+  <!-- Pretendard & Nunito 웹 폰트 -->
+  
+  
+  
+  
+
+  
+
+  <style id="app-css">*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}/*
+! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+*//*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e5e7eb; /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  tab-size: 4; /* 3 */
+  font-family: Pretendard, sans-serif; /* 4 */
+  font-feature-settings: normal; /* 5 */
+  font-variation-settings: normal; /* 6 */
+  -webkit-tap-highlight-color: transparent; /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; /* 1 */
+  font-feature-settings: normal; /* 2 */
+  font-variation-settings: normal; /* 3 */
+  font-size: 1em; /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  letter-spacing: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type='button']),
+input:where([type='reset']),
+input:where([type='submit']) {
+  -webkit-appearance: button; /* 1 */
+  background-color: transparent; /* 2 */
+  background-image: none; /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none;
+}
+.container {
+  width: 100%;
+}
+@media (min-width: 640px) {
+
+  .container {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+
+  .container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+
+  .container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+
+  .container {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+
+  .container {
+    max-width: 1536px;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.\!visible {
+  visibility: visible !important;
+}
+.visible {
+  visibility: visible;
+}
+.fixed {
+  position: fixed;
+}
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.sticky {
+  position: sticky;
+}
+.inset-0 {
+  inset: 0px;
+}
+.top-0 {
+  top: 0px;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-30 {
+  z-index: 30;
+}
+.z-50 {
+  z-index: 50;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mb-0\.5 {
+  margin-bottom: 0.125rem;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+.mb-1\.5 {
+  margin-bottom: 0.375rem;
+}
+.mt-0\.5 {
+  margin-top: 0.125rem;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.block {
+  display: block;
+}
+.flex {
+  display: flex;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.grid {
+  display: grid;
+}
+.hidden {
+  display: none;
+}
+.h-12 {
+  height: 3rem;
+}
+.h-16 {
+  height: 4rem;
+}
+.h-20 {
+  height: 5rem;
+}
+.h-4 {
+  height: 1rem;
+}
+.h-full {
+  height: 100%;
+}
+.min-h-0 {
+  min-height: 0px;
+}
+.min-h-\[300px\] {
+  min-height: 300px;
+}
+.min-h-\[45px\] {
+  min-height: 45px;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.w-12 {
+  width: 3rem;
+}
+.w-16 {
+  width: 4rem;
+}
+.w-20 {
+  width: 5rem;
+}
+.w-4 {
+  width: 1rem;
+}
+.w-44 {
+  width: 11rem;
+}
+.w-full {
+  width: 100%;
+}
+.max-w-3xl {
+  max-width: 48rem;
+}
+.max-w-lg {
+  max-width: 32rem;
+}
+.max-w-md {
+  max-width: 28rem;
+}
+.max-w-sm {
+  max-width: 24rem;
+}
+.max-w-xs {
+  max-width: 20rem;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-none {
+  flex: none;
+}
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+.select-all {
+  user-select: all;
+}
+.resize-none {
+  resize: none;
+}
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.gap-1 {
+  gap: 0.25rem;
+}
+.gap-1\.5 {
+  gap: 0.375rem;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.space-x-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
+}
+.space-x-1\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.375rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.375rem * calc(1 - var(--tw-space-x-reverse)));
+}
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+.space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.375rem * var(--tw-space-y-reverse));
+}
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+.break-words {
+  overflow-wrap: break-word;
+}
+.rounded-2xl {
+  border-radius: 1rem;
+}
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+.rounded-md {
+  border-radius: 0.375rem;
+}
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+.border {
+  border-width: 1px;
+}
+.border-2 {
+  border-width: 2px;
+}
+.border-b {
+  border-bottom-width: 1px;
+}
+.border-t {
+  border-top-width: 1px;
+}
+.border-amber-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(253 230 138 / var(--tw-border-opacity, 1));
+}
+.border-amber-200\/80 {
+  border-color: rgb(253 230 138 / 0.8);
+}
+.border-brand-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(224 231 255 / var(--tw-border-opacity, 1));
+}
+.border-brand-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(79 70 229 / var(--tw-border-opacity, 1));
+}
+.border-indigo-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(224 231 255 / var(--tw-border-opacity, 1));
+}
+.border-indigo-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(199 210 254 / var(--tw-border-opacity, 1));
+}
+.border-rose-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 205 211 / var(--tw-border-opacity, 1));
+}
+.border-rose-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(253 164 175 / var(--tw-border-opacity, 1));
+}
+.border-slate-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(241 245 249 / var(--tw-border-opacity, 1));
+}
+.border-slate-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(226 232 240 / var(--tw-border-opacity, 1));
+}
+.border-slate-200\/60 {
+  border-color: rgb(226 232 240 / 0.6);
+}
+.border-slate-200\/80 {
+  border-color: rgb(226 232 240 / 0.8);
+}
+.bg-amber-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(251 191 36 / var(--tw-bg-opacity, 1));
+}
+.bg-amber-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 251 235 / var(--tw-bg-opacity, 1));
+}
+.bg-amber-50\/70 {
+  background-color: rgb(255 251 235 / 0.7);
+}
+.bg-brand-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(238 242 255 / var(--tw-bg-opacity, 1));
+}
+.bg-brand-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(79 70 229 / var(--tw-bg-opacity, 1));
+}
+.bg-emerald-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
+}
+.bg-indigo-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+}
+.bg-indigo-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(238 242 255 / var(--tw-bg-opacity, 1));
+}
+.bg-indigo-50\/90 {
+  background-color: rgb(238 242 255 / 0.9);
+}
+.bg-indigo-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(79 70 229 / var(--tw-bg-opacity, 1));
+}
+.bg-rose-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 228 230 / var(--tw-bg-opacity, 1));
+}
+.bg-rose-400\/40 {
+  background-color: rgb(251 113 133 / 0.4);
+}
+.bg-rose-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 241 242 / var(--tw-bg-opacity, 1));
+}
+.bg-rose-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 63 94 / var(--tw-bg-opacity, 1));
+}
+.bg-slate-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
+}
+.bg-slate-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 250 252 / var(--tw-bg-opacity, 1));
+}
+.bg-slate-900\/40 {
+  background-color: rgb(15 23 42 / 0.4);
+}
+.bg-slate-900\/50 {
+  background-color: rgb(15 23 42 / 0.5);
+}
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+.p-0\.5 {
+  padding: 0.125rem;
+}
+.p-1 {
+  padding: 0.25rem;
+}
+.p-1\.5 {
+  padding: 0.375rem;
+}
+.p-2 {
+  padding: 0.5rem;
+}
+.p-2\.5 {
+  padding: 0.625rem;
+}
+.p-3 {
+  padding: 0.75rem;
+}
+.p-3\.5 {
+  padding: 0.875rem;
+}
+.p-4 {
+  padding: 1rem;
+}
+.p-6 {
+  padding: 1.5rem;
+}
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+.px-3\.5 {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.px-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+.py-1\.5 {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+.pt-0\.5 {
+  padding-top: 0.125rem;
+}
+.pt-1 {
+  padding-top: 0.25rem;
+}
+.pt-1\.5 {
+  padding-top: 0.375rem;
+}
+.text-center {
+  text-align: center;
+}
+.font-en {
+  font-family: Nunito, sans-serif;
+}
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+.text-\[10px\] {
+  font-size: 10px;
+}
+.text-\[11px\] {
+  font-size: 11px;
+}
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.font-black {
+  font-weight: 900;
+}
+.font-bold {
+  font-weight: 700;
+}
+.font-extrabold {
+  font-weight: 800;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-normal {
+  font-weight: 400;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.leading-relaxed {
+  line-height: 1.625;
+}
+.leading-snug {
+  line-height: 1.375;
+}
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+.text-amber-800 {
+  --tw-text-opacity: 1;
+  color: rgb(146 64 14 / var(--tw-text-opacity, 1));
+}
+.text-amber-900 {
+  --tw-text-opacity: 1;
+  color: rgb(120 53 15 / var(--tw-text-opacity, 1));
+}
+.text-amber-950 {
+  --tw-text-opacity: 1;
+  color: rgb(69 26 3 / var(--tw-text-opacity, 1));
+}
+.text-brand-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+.text-brand-700 {
+  --tw-text-opacity: 1;
+  color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+}
+.text-emerald-700 {
+  --tw-text-opacity: 1;
+  color: rgb(4 120 87 / var(--tw-text-opacity, 1));
+}
+.text-indigo-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+.text-indigo-700 {
+  --tw-text-opacity: 1;
+  color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+}
+.text-rose-600 {
+  --tw-text-opacity: 1;
+  color: rgb(225 29 72 / var(--tw-text-opacity, 1));
+}
+.text-rose-700 {
+  --tw-text-opacity: 1;
+  color: rgb(190 18 60 / var(--tw-text-opacity, 1));
+}
+.text-slate-400 {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity, 1));
+}
+.text-slate-500 {
+  --tw-text-opacity: 1;
+  color: rgb(100 116 139 / var(--tw-text-opacity, 1));
+}
+.text-slate-600 {
+  --tw-text-opacity: 1;
+  color: rgb(71 85 105 / var(--tw-text-opacity, 1));
+}
+.text-slate-700 {
+  --tw-text-opacity: 1;
+  color: rgb(51 65 85 / var(--tw-text-opacity, 1));
+}
+.text-slate-800 {
+  --tw-text-opacity: 1;
+  color: rgb(30 41 59 / var(--tw-text-opacity, 1));
+}
+.text-slate-900 {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity, 1));
+}
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+.shadow-2xl {
+  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-card {
+  --tw-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  --tw-shadow-colored: 0 10px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-card-lg {
+  --tw-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+  --tw-shadow-colored: 0 20px 30px -10px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-inner {
+  --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-pill {
+  --tw-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.25);
+  --tw-shadow-colored: 0 4px 14px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.drop-shadow-sm {
+  --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.backdrop-blur-sm {
+  --tw-backdrop-blur: blur(4px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.duration-150 {
+  transition-duration: 150ms;
+}
+.selection\:bg-brand-100 *::selection {
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+}
+.selection\:text-brand-700 *::selection {
+  --tw-text-opacity: 1;
+  color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+}
+.selection\:bg-brand-100::selection {
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+}
+.selection\:text-brand-700::selection {
+  --tw-text-opacity: 1;
+  color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+}
+.placeholder\:text-slate-400::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity, 1));
+}
+.hover\:bg-amber-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 243 199 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-amber-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(245 158 11 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-brand-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(67 56 202 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-indigo-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(238 242 255 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-indigo-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(67 56 202 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-rose-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 228 230 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-rose-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 205 211 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-rose-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(225 29 72 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-slate-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-slate-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-slate-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 250 252 / var(--tw-bg-opacity, 1));
+}
+.hover\:text-brand-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+}
+.hover\:text-slate-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(71 85 105 / var(--tw-text-opacity, 1));
+}
+.hover\:text-slate-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(30 41 59 / var(--tw-text-opacity, 1));
+}
+.hover\:text-slate-900:hover {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity, 1));
+}
+.focus\:border-brand-500:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(99 102 241 / var(--tw-border-opacity, 1));
+}
+.focus\:border-brand-600:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(79 70 229 / var(--tw-border-opacity, 1));
+}
+.focus\:border-indigo-500:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(99 102 241 / var(--tw-border-opacity, 1));
+}
+.focus\:bg-white:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+.focus\:ring-brand-500\/10:focus {
+  --tw-ring-color: rgb(99 102 241 / 0.1);
+}
+.active\:scale-95:active {
+  --tw-scale-x: .95;
+  --tw-scale-y: .95;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+@media (min-width: 640px) {
+
+  .sm\:inline {
+    display: inline;
+  }
+
+  .sm\:min-h-\[55px\] {
+    min-height: 55px;
+  }
+
+  .sm\:gap-2\.5 {
+    gap: 0.625rem;
+  }
+
+  .sm\:p-2\.5 {
+    padding: 0.625rem;
+  }
+
+  .sm\:p-3 {
+    padding: 0.75rem;
+  }
+
+  .sm\:p-3\.5 {
+    padding: 0.875rem;
+  }
+
+  .sm\:p-5 {
+    padding: 1.25rem;
+  }
+
+  .sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .sm\:text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .sm\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .sm\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .sm\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+}
+@media (min-width: 768px) {
+
+  .md\:col-span-3 {
+    grid-column: span 3 / span 3;
+  }
+
+  .md\:col-span-7 {
+    grid-column: span 7 / span 7;
+  }
+
+  .md\:hidden {
+    display: none;
+  }
+
+  .md\:h-screen {
+    height: 100vh;
+  }
+
+  .md\:grid-cols-10 {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+
+  .lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+[hidden]{display:none!important}.hidden{display:none!important}button:disabled{opacity:.6;cursor:wait}button[aria-pressed=true]{box-shadow:0 0 0 2px #818cf8}body{font-family:Pretendard,"Malgun Gothic",system-ui,sans-serif}.font-en{font-family:Nunito,Arial,sans-serif}#apiKeyModal>div,#teacherPinModal>div,#voiceModal>div{max-height:92dvh;overflow-y:auto}#resultSection>div:first-child{flex-wrap:wrap;gap:6px}@media(min-width:768px){body{height:100dvh;min-height:0}main{overflow:hidden}}@media(max-height:550px){body{height:auto!important;overflow-y:auto!important}main{min-height:420px;overflow:visible!important}}</style><style>
+    /* 태블릿/전자칠판 터치 최적화 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .font-en {
+      font-family: 'Nunito', sans-serif;
+    }
+    /* 음성인식 녹음 펄스 애니메이션 */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .mic-recording-pulse {
+      animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    /* 부드러운 전환 효과 */
+    .btn-bounce {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-bounce:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================================
+       전자칠판 (Chalkboard) 모드 고대비 테마
+       ========================================= */
+    body.board-mode-active {
+      background-color: #0b1e15 !important;
+    }
+    .board-mode-active #idlePlaceholder {
+      background-color: #133324 !important;
+      border: 4px solid #78350f !important; /* 원목 칠판 테두리 */
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    }
+    .board-mode-active #idlePlaceholder h2 {
+      color: #fef08a !important; /* 분필 노란색 */
+      font-size: 1.5rem !important;
+      font-weight: 900 !important;
+    }
+    .board-mode-active #idlePlaceholder p {
+      color: #6ee7b7 !important; /* 분필 초록색 */
+      font-size: 0.95rem !important;
+    }
+    .board-mode-active #resultSection {
+      background-color: #133324 !important; /* 딥 초록 칠판 */
+      border: 4px solid #78350f !important; /* 원목 분필틀 테두리 */
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.6) !important;
+    }
+    .board-mode-active #resultText {
+      color: #fef08a !important; /* 선명한 노란 분필 폰트 */
+      font-size: 2.75rem !important;
+      line-height: 1.15 !important;
+      letter-spacing: 0.02em !important;
+      text-shadow: 0 0 12px rgba(254, 240, 138, 0.4) !important;
+    }
+    @media (min-width: 640px) {
+      .board-mode-active #resultText {
+        font-size: 3.5rem !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      .board-mode-active #resultText {
+        font-size: 4.25rem !important;
+      }
+    }
+    .board-mode-active #resultGradeBadge {
+      background-color: #064e3b !important;
+      color: #a7f3d0 !important;
+      border: 1px solid #059669 !important;
+    }
+    .board-mode-active #pronunciationGuide span {
+      background-color: #064e3b !important;
+      border-color: #047857 !important;
+      color: #67e8f9 !important; /* 분필 하늘색 */
+      font-size: 1.15rem !important;
+    }
+    .board-mode-active #tipBox {
+      background-color: rgba(6, 78, 59, 0.85) !important;
+      border: 1px solid #059669 !important;
+      color: #fef3c7 !important;
+      font-size: 0.9rem !important;
+    }
+    .board-mode-active #keyWordsContainer span.bg-slate-100 {
+      background-color: #064e3b !important;
+      border-color: #059669 !important;
+      color: #ecfdf5 !important;
+      font-size: 0.85rem !important;
+    }
+    .board-mode-active #keyWordsContainer span.text-brand-600 {
+      color: #fde047 !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen md:h-screen text-slate-800 flex flex-col justify-between selection:bg-brand-100 selection:text-brand-700 overflow-x-hidden overflow-y-auto bg-slate-50">
+
+  <!-- ===============================
+       상단 내비게이션 바 (슬림 & 깔끔)
+  =============================== -->
+  <header class="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs flex-none">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+      
+      <!-- 로고 및 서비스 타이틀 -->
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl filter drop-shadow-sm">🎒</span>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-slate-900 font-en">inEnglish</h1>
+            <span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-full bg-indigo-50 text-brand-600 border border-brand-100">
+              2022 개정 교육과정
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상단 컨트롤 (칠판 모드 / 설정) -->
+      <div class="flex items-center space-x-1.5">
+        <button id="boardModeBtn" title="전자칠판용 큰 글씨 모드" class="flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 btn-bounce" data-action="toggleBoardMode" type="button" aria-label="전자칠판용 큰 글씨 모드">
+          <span>🖥️</span>
+          <span id="boardModeText" class="hidden sm:inline" hidden="">칠판 모드</span>
+        </button>
+
+        <button id="settingsBtn" title="교사용 설정 (선생님 전용 🔒)" class="p-1.5 rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100 btn-bounce" data-action="requestTeacherSettings" type="button" aria-label="교사용 설정 (선생님 전용 🔒)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ===============================
+       메인 컨텐츠 영역: 태블릿 가로모드(md:) 좌우 2열 분할 레이아웃
+  =============================== -->
+  <main class="w-full px-3 sm:px-6 lg:px-8 py-1.5 flex-1 min-h-0 flex flex-col overflow-y-auto">
+    
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-2 sm:gap-2.5 flex-1 min-h-0">
+
+      <!-- ===========================
+           [좌측 칼럼] 입력 & 학년 선택 (30% 가로 배정 - 3:7 비율)
+      ============================ -->
+      <div class="md:col-span-3 flex flex-col space-y-1.5 min-h-0">
+        
+        <!-- 1. 알약형 학년 선택 탭 (컴팩트 & 원클릭 동기화) -->
+        <section class="bg-white rounded-2xl p-2 sm:p-2.5 shadow-card border border-slate-100 flex-none">
+          <div class="flex items-center justify-between mb-1.5 px-1">
+            <span class="text-[11px] font-bold text-slate-500">🎯 학년 선택</span>
+            <select id="gradeSelectDropdown" class="text-[11px] bg-slate-50 border border-slate-200 rounded-lg px-2 py-0.5 text-slate-700 font-medium">
+              <option value="3">3학년 (기초)</option>
+              <option value="4">4학년 (일상)</option>
+              <option value="5">5학년 (문장)</option>
+              <option value="6">6학년 (표현)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5" id="gradePillsContainer">
+            <!-- 3학년 -->
+            <button type="button" id="gradeBtn-3" class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-brand-600 bg-brand-50 text-brand-700 shadow-sm font-bold" data-action="selectGrade" data-grade="3">
+              <span class="text-xl mb-0.5">🐣</span>
+              <span class="text-xs sm:text-sm font-extrabold">3학년</span>
+            </button>
+            <!-- 4학년 -->
+            <button type="button" id="gradeBtn-4" class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold" data-action="selectGrade" data-grade="4">
+              <span class="text-xl mb-0.5">🐥</span>
+              <span class="text-xs sm:text-sm font-extrabold">4학년</span>
+            </button>
+            <!-- 5학년 -->
+            <button type="button" id="gradeBtn-5" class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold" data-action="selectGrade" data-grade="5">
+              <span class="text-xl mb-0.5">🚀</span>
+              <span class="text-xs sm:text-sm font-extrabold">5학년</span>
+            </button>
+            <!-- 6학년 -->
+            <button type="button" id="gradeBtn-6" class="grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-bold" data-action="selectGrade" data-grade="6">
+              <span class="text-xl mb-0.5">🎓</span>
+              <span class="text-xs sm:text-sm font-extrabold">6학년</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. 스마트 입력 카드 (상하 여백 낭비 없이 꽉 채움) -->
+        <section class="bg-white rounded-2xl p-2.5 sm:p-3 shadow-card border border-slate-100 flex-1 flex flex-col min-h-0 justify-between gap-1 overflow-hidden">
+          
+          <!-- 감지 배지 & 지우기 -->
+          <div class="flex items-center justify-between flex-none">
+            <div id="langIndicatorBadge" class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 transition-colors">
+              <span>✨</span>
+              <span id="langIndicatorText">한글 또는 영어를 입력해주세요</span>
+            </div>
+
+            <button type="button" id="clearBtn" title="입력한 내용 지우기" class="hidden items-center space-x-1 px-2.5 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 border border-rose-300 font-extrabold text-xs shadow-xs transition-all btn-bounce" data-action="clearInput" aria-label="입력한 내용 지우기" hidden="">
+              <span class="text-xs">🗑️</span>
+              <span>지우기</span>
+            </button>
+          </div>
+
+          <!-- 메인 텍스트 입력창 (높이 균형 최적화) -->
+          <div class="relative flex-1 min-h-[45px] sm:min-h-[55px] flex flex-col">
+            <textarea id="inputText" placeholder="번역하고 싶은 말을 입력하거나, 아래 마이크 🎙️를 눌러 말씀하세요!" class="w-full h-full flex-1 p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none transition-all placeholder:text-slate-400 resize-none font-medium text-slate-900 leading-relaxed text-sm" maxlength="500"></textarea>
+          <span id="characterCount" class="text-[10px] text-slate-400">0 / 500</span></div>
+
+          <!-- 액션 바: 마이크 + 번역 버튼 -->
+          <div class="flex items-center justify-between gap-1 flex-none pt-0.5">
+            <div class="flex items-center space-x-1.5">
+              <button type="button" id="micBtn" class="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs btn-bounce" data-action="toggleSpeechRecognition">
+                <span class="text-base">🎙️</span>
+                <span>말하기</span>
+              </button>
+
+              <div class="flex bg-slate-100 rounded-lg p-0.5 text-[11px] font-semibold text-slate-600">
+                <button type="button" id="speechLangKo" class="px-2 py-0.5 rounded-md bg-white text-slate-900 shadow-xs" data-action="setSpeechLanguage" data-lang="ko-KR">한글</button>
+                <button type="button" id="speechLangEn" class="px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-900" data-action="setSpeechLanguage" data-lang="en-US">영어</button>
+              </div>
+            </div>
+
+            <button type="button" id="translateBtn" class="flex items-center justify-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-pill btn-bounce" data-action="requestTranslation">
+              <span id="btnSpinner" class="hidden animate-spin" hidden="">⏳</span>
+              <span id="btnIcon">✨</span>
+              <span id="btnText">번역하기</span>
+            </button>
+          </div>
+
+          <!-- 교실 추천 꿀표현 칩 -->
+          <div class="pt-1 border-t border-slate-100 flex-none">
+            <div class="text-[10px] font-bold text-slate-400 mb-0.5 flex items-center space-x-1">
+              <span>💡</span>
+              <span>교실 자주 쓰는 꿀표현:</span>
+            </div>
+            <div class="flex flex-wrap gap-1" id="quickPhrasesContainer">
+              <!-- JS에서 동적 주입 -->
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- ===========================
+           [우측 칼럼] 대답 패널 (7칸 배정 - 스크롤 없이 한눈에!)
+      ============================ -->
+      <div class="md:col-span-7 flex flex-col min-h-0">
+        
+        <!-- 대기 상태 (번역 전 플레이스홀더) -->
+        <section id="idlePlaceholder" class="bg-white rounded-2xl p-4 sm:p-5 shadow-card border border-slate-100 min-h-[300px] flex-1 flex flex-col items-center justify-center text-center space-y-2">
+          <div class="w-12 h-12 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-2xl">
+            🎒
+          </div>
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-800">교과서 맞춤 대답이 여기에 나타나요</h2>
+            <p class="text-xs text-slate-500 mt-0.5 max-w-xs mx-auto leading-relaxed">
+              왼쪽에서 학년을 고르고 말을 입력하거나 마이크 🎙️를 눌러보세요. 2022 개정 교육과정 수준에 딱 맞추어 번역해 드려요!
+            </p>
+          </div>
+        </section>
+
+        <!-- 번역 결과 카드 (번역 완료 시 표시) -->
+        <section id="resultSection" class="hidden bg-white rounded-2xl p-3 sm:p-3.5 shadow-card-lg border-2 border-indigo-100 flex-1 flex flex-col min-h-0" hidden="">
+          
+          <!-- 카드 헤더: 학년 레벨 태그 + 발음/복사 컨트롤 (절대 스크롤되지 않는 영구 상단 고정 헤더!) -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2 flex-none bg-white">
+            <div class="flex items-center space-x-1.5">
+              <span id="resultGradeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-100 text-brand-700">
+                3학년 맞춤 표현 ✨
+              </span>
+              <span id="cacheBadge" class="hidden px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700" hidden="">
+                ⚡ 캐시
+              </span>
+            </div>
+
+            <!-- 발음 듣기 & 복사 버튼 -->
+            <div class="flex items-center space-x-1.5">
+              <button type="button" id="ttsSpeedBtn" title="발음 속도 조절" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold btn-bounce" data-action="toggleTtsSpeed" aria-label="발음 속도 조절">
+                🐢 보통
+              </button>
+
+              <button type="button" id="speakBtn" class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold text-xs shadow-sm btn-bounce" data-action="speakResult">
+                <span>🔊</span>
+                <span>발음 듣기</span>
+              </button>
+
+              <button type="button" id="copyBtn" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs btn-bounce" data-action="copyResult">
+                <span id="copyIcon">📋</span>
+                <span id="copyText">복사</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 스크롤 가능 내용 영역: 번역 문장 + 발음기호 + 팁 + 단어장 -->
+          <div class="flex-1 overflow-y-auto flex flex-col py-1.5 space-y-2 min-h-0" id="resultScrollBody">
+            <!-- 메인 번역 문장 출력부 -->
+            <div class="py-1 flex flex-col justify-center min-h-0">
+              <p id="resultText" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug font-en break-words select-all" aria-live="polite" role="status">
+                <!-- 번역 결과 텍스트 -->
+              </p>
+
+              <!-- 국제음성기호(IPA) 정확한 발음 표기 (한글 발음 완전 제거) -->
+              <div id="pronunciationGuide" class="mt-2 flex items-center">
+                <span class="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold font-mono text-indigo-700 bg-indigo-50/90 border border-indigo-100 px-3 py-0.5 rounded-xl">
+                  <span>🔤 발음기호:</span>
+                  <span id="ipaSymbolText" class="tracking-wide"></span>
+                </span>
+              </div>
+            </div>
+
+            <!-- 교실 친절 팁 -->
+            <div id="tipBox" class="p-2 sm:p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 font-medium flex items-start space-x-1.5 flex-none">
+              <span class="text-sm">👩‍🏫</span>
+              <span id="tipText">선생님 팁이 여기에 표시됩니다.</span>
+            </div>
+
+            <!-- 교과서 쏙쏙 단어장 -->
+            <div id="keyWordsContainer" class="pt-1.5 border-t border-slate-100 flex-none">
+              <div class="text-[11px] font-bold text-slate-400 mb-1 flex items-center space-x-1">
+                <span>📖</span>
+                <span>교과서 핵심 어휘:</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5" id="keyWordsList">
+                <!-- 단어 칩들이 들어옵니다 -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- 오류 안내 카드 -->
+    <div id="errorCard" class="hidden mt-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center space-x-2 flex-none" role="alert" hidden="">
+      <span class="text-lg">⚠️</span>
+      <span id="errorMessage">오류 내용이 표시됩니다.</span>
+    </div>
+
+  </main><div class="flex-none flex items-center justify-between px-4 py-1 text-[10px] text-slate-400"><span id="connectionStatus" aria-live="polite">GAS 연결 중...</span><span id="recordingStatus"></span></div>
+
+  <!-- ===============================
+       하단 정보 및 푸터 (모바일 전용 - 태블릿 가로모드에서는 화면 넘침 방지 위해 숨김)
+  =============================== -->
+  <footer class="md:hidden max-w-3xl w-full mx-auto px-4 py-3 text-center text-xs text-slate-400 border-t border-slate-200/60 mt-2">
+    <p>대한민국 2022 개정 영어과 교육과정(초등 3~6학년) 기준 준수 | Gemini Flash AI 엔진</p>
+  </footer>
+
+  <!-- ===============================
+       선생님 전용 보안 PIN 입력 모달 (전자칠판 * 마스킹 보호 & 엔터 즉시 제출)
+  =============================== -->
+  <div id="teacherPinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs" hidden="">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 text-center animate-scaleUp">
+      <div class="flex flex-col items-center space-y-2">
+        <div class="w-12 h-12 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-2xl">
+          🔒
+        </div>
+        <h2 class="text-base font-extrabold text-slate-800">선생님 전용 설정 인증</h2>
+        <p class="text-xs text-slate-500 max-w-xs leading-relaxed">
+          학생들의 무단 설정을 방지하기 위한 보안 절차입니다.<br>선생님 비밀번호를 입력해주세요.
+        </p>
+      </div>
+
+      <form class="flex flex-col space-y-4" id="teacherPinForm">
+        <div class="py-2">
+          <input type="password" id="pinCodeInput" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••" class="w-44 mx-auto text-center text-3xl tracking-widest font-mono py-2.5 px-3 border-2 border-indigo-200 rounded-2xl focus:border-brand-600 focus:outline-none bg-slate-50 focus:bg-white text-slate-800 transition-all shadow-inner">
+        </div>
+
+        <div class="flex items-center justify-center space-x-2 pt-1">
+          <button type="submit" id="pinSubmitBtn" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-extrabold shadow-sm transition-all btn-bounce">
+            확인
+          </button>
+          <button type="button" class="px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 text-xs font-bold transition-all" data-action="closePinModal">
+            취소
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===============================
+       API 키 설정 모달 (선생님 전용)
+  =============================== -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs" hidden=""><div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4"><div class="flex items-center justify-between"><h2 class="text-lg font-bold text-slate-900">⚙️ 선생님 설정</h2><button type="button" data-action="closeApiKeyModal" aria-label="설정 닫기">✕</button></div><p id="teacherKeyStatus" class="text-sm font-bold text-brand-700"></p><p id="teacherUsage" class="text-xs text-slate-500 leading-relaxed"></p><p class="text-xs text-slate-500 leading-relaxed">API 키는 서버에서 관리합니다. 학생 기기에서는 키를 입력할 필요가 없습니다.</p><a id="historySheetLink" target="_blank" rel="noopener" class="text-center px-4 py-3 rounded-xl bg-indigo-50 text-brand-700 font-bold text-sm">📊 검색 기록 시트 열기 ↗</a><a id="serverSettingsLink" target="_blank" rel="noopener" class="text-center px-4 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm">서버 설정 열기 ↗</a><p class="text-[11px] text-slate-400">서버 설정과 기록은 권한이 있는 교사 계정으로 열 수 있습니다.</p><button type="button" data-action="closeApiKeyModal" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-sm">닫기</button></div></div>
+
+  <!-- ===============================
+       인라인 음성 인식 모달 (태블릿 무팝업 지원)
+  =============================== -->
+  <div id="voiceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm" hidden="">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 animate-scaleUp">
+      <!-- 헤더 & 언어 토글 -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🎙️</span>
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900">음성으로 말하기</h2>
+            <p class="text-xs text-slate-500">교실 소음이 있어도 키보드로 글자를 직접 고칠 수 있어요!</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="flex bg-slate-100 rounded-xl p-1 text-xs font-bold">
+            <button type="button" id="modalLangKo" class="px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs" data-action="setModalSpeechLang" data-lang="ko-KR">한글</button>
+            <button type="button" id="modalLangEn" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800" data-action="setModalSpeechLang" data-lang="en-US">영어</button>
+          </div>
+          <button type="button" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1" data-action="closeVoiceModal">✕</button>
+        </div>
+      </div>
+
+      <!-- 마이크 원형 애니메이션 버튼 -->
+      <div class="flex flex-col items-center justify-center py-2 space-y-2">
+        <div class="relative flex items-center justify-center">
+          <div id="modalPulseRing" class="w-20 h-20 rounded-full bg-rose-400/40 pulse-effect absolute hidden" hidden=""></div>
+          <button type="button" id="modalMicBtn" class="w-16 h-16 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center text-3xl shadow-lg relative z-10 transition-transform active:scale-95" data-action="toggleModalListening">🎙️</button>
+        </div>
+        <p id="modalStatusMsg" class="text-xs font-extrabold text-indigo-600">🎙️ 듣고 있어요! 편하게 말씀하세요...</p><button type="button" data-action="openVoicePopup" class="px-3 py-2 rounded-xl bg-indigo-50 text-brand-700 font-bold text-xs">독립 음성창 열기 ↗</button>
+      </div>
+
+      <!-- 음성 인식 및 키보드 수정 입력창 -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between px-1">
+          <label for="modalVoiceInput" class="text-xs font-bold text-slate-700 flex items-center space-x-1">
+            <span>✏️ 인식된 내용 (필요한 경우 키보드로 직접 수정하세요):</span>
+          </label>
+          <button type="button" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-extrabold text-xs transition-all" data-action="clearModalVoiceInput">
+            <span>🗑️</span>
+            <span>지우기</span>
+          </button>
+        </div>
+        <textarea id="modalVoiceInput" rows="3" class="w-full p-3.5 bg-slate-50 focus:bg-white rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 text-base font-bold text-slate-800 leading-relaxed resize-none focus:outline-none shadow-inner" placeholder="말씀하신 내용이 여기에 나타나요. 잘못 인식된 단어나 이름은 키보드로 바로 고쳐보세요!" maxlength="500"></textarea>
+      </div>
+
+      <!-- 하단 버튼 바 -->
+      <div class="flex items-center justify-between pt-1">
+        <button type="button" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all" data-action="closeVoiceModal">취소</button>
+        <div class="flex items-center space-x-2">
+          <button type="button" class="px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-all" data-action="restartModalListening">🎙️ 다시 말하기</button>
+          <button type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition-all flex items-center space-x-1.5" data-action="submitModalVoiceResult">
+            <span>✨</span><span>완료 및 번역</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============================
+       프론트엔드 비즈니스 로직 스크립트
+  =============================== -->
+  
+
+
+
+
+<span id="speechLanguageStatus" class="sr-only"></span><script>(function () {
+'use strict';
+var state={grade:3,board:false,slow:false,result:null,token:'',bootstrap:null,busy:false,sequence:0,rec:null,listening:false,lang:'ko-KR',popup:null,channel:'',teacher:null,audio:null};
+var QUICK_PHRASES={
+3:['화장실 다녀와도 돼요?','선생님 도와주세요!','이거 뭐예요?','내 차례야!','만나서 반가워!','I like soccer.'],
+4:['지금 몇 시예요?','제 공책이 어디에 있나요?','오늘 날씨가 정말 좋아요.','숙제 다 끝냈어요!','What are you doing?'],
+5:['어제 숙제를 다 못했어요.','이번 주말에 할머니 댁에 갈 거예요.','제 차례가 언제인가요?','질문이 하나 있어요.','What did you do yesterday?'],
+6:['제가 먼저 발표해도 될까요?','왜냐하면 머리가 아팠기 때문이에요.','우리 같이 점심 먹으러 갈래?','제 키가 더 커요.',"Why don't you join us?"]};
+var $=function(id){return document.getElementById(id);};
+function show(id,visible){var el=typeof id==='string'?$(id):id;if(!el)return;el.hidden=!visible;el.classList.toggle('hidden',!visible);}
+function text(id,value){var el=$(id);if(el)el.textContent=value;}
+function uid(){if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();return Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);}
+function rpc(name,payload,timeout){
+  return new Promise(function(resolve,reject){
+    var ended=false,timer=setTimeout(function(){if(ended)return;ended=true;reject(new Error('연결이 오래 걸리고 있어요. 잠시 후 다시 시도해주세요.'));},timeout||45000);
+    function complete(fn,value){if(ended)return;ended=true;clearTimeout(timer);fn(value);}
+    try{
+      if(!window.google||!google.script||!google.script.run)throw new Error('GAS 앱 주소에서 다시 열어주세요.');
+      var runner=google.script.run.withSuccessHandler(function(v){complete(resolve,v);}).withFailureHandler(function(){complete(reject,new Error('서버에 연결하지 못했습니다. 다시 시도해주세요.'));});
+      if(name==='getAppBootstrap')runner.getAppBootstrap();
+      else if(name==='translateElementary')runner.translateElementary(payload);
+      else if(name==='getTeacherStatus')runner.getTeacherStatus(payload);
+      else throw new Error('지원하지 않는 요청입니다.');
+    }catch(e){complete(reject,e);}
+  });
+}
+function ensureSession(){
+  if(state.token)return Promise.resolve(state.token);
+  if(!state.bootstrap)state.bootstrap=rpc('getAppBootstrap',null,20000).then(function(v){
+    if(!v||!v.success)throw new Error(v&&v.error||'서버에 연결하지 못했습니다.');
+    state.token=v.token;text('connectionStatus','GAS 연결됨 · v'+v.version);return state.token;
+  }).catch(function(e){text('connectionStatus','연결 재시도 가능');throw e;}).finally(function(){state.bootstrap=null;});
+  return state.bootstrap;
+}
+function showError(message){text('errorMessage',message);show('errorCard',true);}
+function hideError(){show('errorCard',false);}
+function setLoading(loading){state.busy=loading;$('translateBtn').disabled=loading;show('btnSpinner',loading);show('btnIcon',!loading);text('btnText',loading?'번역 중...':'번역하기');}
+function selectGrade(grade){
+  grade=Number(grade);if([3,4,5,6].indexOf(grade)<0)return;
+  state.grade=grade;state.sequence++;if(state.busy)setLoading(false);
+  $('gradeSelectDropdown').value=String(grade);
+  for(var g=3;g<=6;g++){
+    var el=$('gradeBtn-'+g);if(!el)continue;
+    el.className='grade-pill flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition-all duration-150 btn-bounce font-bold '+(g===grade?'border-brand-600 bg-brand-50 text-brand-700 shadow-sm':'border-slate-200 bg-white text-slate-700 hover:bg-slate-50');
+    el.setAttribute('aria-pressed',String(g===grade));
+  }
+  var container=$('quickPhrasesContainer');container.replaceChildren();
+  QUICK_PHRASES[grade].forEach(function(phrase){
+    var chip=document.createElement('button');chip.type='button';chip.textContent=phrase;
+    chip.className='px-2 py-1 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-brand-700 text-[11px] border border-slate-200 btn-bounce';
+    chip.addEventListener('click',function(){$('inputText').value=phrase;handleInputTextChange();requestTranslation();});container.appendChild(chip);
+  });
+  if(state.result&&state.result.grade!==grade){show('resultSection',false);show('idlePlaceholder',true);}
+}
+function handleInputTextChange(){
+  var input=$('inputText'),value=input.value.trim();state.sequence++;if(state.busy)setLoading(false);
+  show('clearBtn',!!value);$('clearBtn').classList.toggle('inline-flex',!!value);
+  var ko=/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value),en=/[a-zA-Z]/.test(value);
+  text('langIndicatorText',!value?'한글 또는 영어를 입력해주세요':ko&&en?'🔄 한·영 혼합 스마트 완성 모드':ko?'🇰🇷 한글 → 🇺🇸 영어 번역 모드':en?'🇺🇸 영어 → 🇰🇷 한글 번역 모드':'한글 또는 영어로 입력해주세요');
+  text('characterCount',input.value.length+' / 500');
+}
+function clearInput(){
+  state.sequence++;$('inputText').value='';handleInputTextChange();hideError();show('resultSection',false);show('idlePlaceholder',true);state.result=null;stopAudio();$('inputText').focus();
+}
+function handleKeyDown(e){if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();requestTranslation();}}
+async function requestTranslation(){
+  if(state.busy)return;
+  var value=$('inputText').value.trim();if(!value){showError('번역할 내용을 입력하거나 마이크로 말씀해주세요! 😊');return;}
+  if(value.length>500){showError('500자 이내로 입력해주세요.');return;}
+  if(/[^A-Za-z\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A30-9\s.,?!'"“”‘’():;\-–—…/%&+*=~@#$\[\]{}]/.test(value)){showError('한글 또는 영어로 입력해주세요.');return;}
+  hideError();setLoading(true);var sequence=++state.sequence,grade=state.grade;
+  try{
+    var token=await ensureSession();if(sequence!==state.sequence)return;
+    var response=await rpc('translateElementary',{token:token,requestId:uid(),text:value,grade:grade},55000);
+    if(sequence!==state.sequence)return;
+    if(!response||!response.success){if(response&&/인증|새로고침/.test(response.error))state.token='';throw new Error(response&&response.error||'번역 결과를 받지 못했습니다.');}
+    renderResult(response.data);text('recordingStatus',response.recorded?'검색 기록 저장됨':'번역 완료 · 검색 기록 저장 지연');
+  }catch(e){if(sequence===state.sequence)showError(e.message||'다시 시도해주세요.');}
+  finally{if(sequence===state.sequence)setLoading(false);}
+}
+function renderResult(data){
+  if(!data||typeof data.translation!=='string'||!Array.isArray(data.keyWords))throw new Error('번역 결과를 읽지 못했습니다.');
+  state.result=data;show('idlePlaceholder',false);show('resultSection',true);
+  text('resultGradeBadge',data.grade+'학년 '+(data.direction==='mixed-to-en'?'스마트 완성 ✨':'맞춤 표현 ✨'));
+  text('resultText',data.translation);text('ipaSymbolText',data.pronunciation||'');
+  show('pronunciationGuide',!!data.pronunciation&&data.direction!=='en-to-ko');show('cacheBadge',!!data.isCached);
+  text('tipText',data.tip||'');show('tipBox',!!data.tip);
+  var list=$('keyWordsList');list.replaceChildren();
+  data.keyWords.slice(0,4).forEach(function(item){
+    var chip=document.createElement('span'),word=document.createElement('span'),meaning=document.createElement('span');
+    chip.className='px-3 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200/80';
+    word.className='text-brand-600 font-en font-extrabold';word.textContent=String(item.word||'');
+    meaning.className='text-slate-500 font-normal';meaning.textContent=' ('+String(item.meaning||'')+')';
+    chip.append(word,meaning);list.appendChild(chip);
+  });
+  show('keyWordsContainer',data.keyWords.length>0);$('resultScrollBody').scrollTop=0;
+  if(window.innerWidth<768)$('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleBoardMode(){state.board=!state.board;document.body.classList.toggle('board-mode-active',state.board);text('boardModeText',state.board?'칠판 모드 ON':'칠판 모드');$('boardModeBtn').setAttribute('aria-pressed',String(state.board));}
+function stopAudio(){if(state.audio){state.audio.pause();state.audio=null;}try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(ignore){}}
+function speakWithSpeechSynthesis(){
+  if(!state.result||!window.speechSynthesis){showError('이 브라우저에서 발음을 재생할 수 없습니다.');return;}
+  try{
+    speechSynthesis.cancel();var utterance=new SpeechSynthesisUtterance(state.result.translation),english=state.result.direction!=='en-to-ko';
+    utterance.lang=english?'en-US':'ko-KR';utterance.rate=state.slow?0.65:0.9;
+    var voices=speechSynthesis.getVoices(),voice=voices.find(function(v){return v.lang.indexOf(english?'en':'ko')===0&&/Google|Natural|Jenny|Aria|SunHi/.test(v.name);});
+    if(voice)utterance.voice=voice;speechSynthesis.speak(utterance);
+  }catch(e){showError('발음을 재생하지 못했습니다. 한 번 더 눌러주세요.');}
+}
+function speakResult(){
+  if(!state.result)return;stopAudio();
+  try{
+    var english=state.result.direction!=='en-to-ko',audio=new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl='+(english?'en':'ko')+'&q='+encodeURIComponent(state.result.translation));
+    state.audio=audio;audio.playbackRate=state.slow?0.7:1;audio.onerror=speakWithSpeechSynthesis;
+    var promise=audio.play();if(promise&&promise.catch)promise.catch(speakWithSpeechSynthesis);
+  }catch(e){speakWithSpeechSynthesis();}
+}
+function toggleTtsSpeed(){state.slow=!state.slow;text('ttsSpeedBtn',state.slow?'🐢 천천히':'⚡ 보통');if(state.result)speakResult();}
+async function copyResult(){
+  if(!state.result)return;
+  try{
+    if(!navigator.clipboard||!navigator.clipboard.writeText)throw new Error('fallback');
+    await navigator.clipboard.writeText(state.result.translation);
+  }catch(e){
+    var area=document.createElement('textarea');area.value=state.result.translation;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();
+    var copied=false;try{copied=document.execCommand('copy');}catch(ignore){}area.remove();
+    if(!copied){showError('번역 문장을 길게 눌러 복사해주세요.');return;}
+  }
+  text('copyText','완료!');text('copyIcon','✅');setTimeout(function(){text('copyText','복사');text('copyIcon','📋');},1600);
+}
+function requestTeacherSettings(){hideError();$('pinCodeInput').value='';show('teacherPinModal',true);$('pinCodeInput').focus();}
+function closePinModal(){show('teacherPinModal',false);}
+async function submitTeacherPin(){
+  if($('pinSubmitBtn').disabled)return;
+  $('pinSubmitBtn').disabled=true;
+  try{
+    var token=await ensureSession(),result=await rpc('getTeacherStatus',{token:token,pin:$('pinCodeInput').value.trim()},20000);
+    if(!result||!result.success)throw new Error(result&&result.error||'인증하지 못했습니다.');
+    state.teacher=result;closePinModal();show('apiKeyModal',true);
+    text('teacherKeyStatus',result.keyConfigured?'서버 API 키가 설정되어 있습니다.':'서버 API 키 설정이 필요합니다.');
+    text('teacherUsage','오늘 AI 번역 '+result.dailyUsed+' / '+result.dailyLimit+'회 · '+result.model+' · v'+result.version);
+    $('serverSettingsLink').href=result.projectUrl;$('historySheetLink').href=result.sheetUrl;
+  }catch(e){showError(e.message);$('pinCodeInput').value='';$('pinCodeInput').focus();}
+  finally{$('pinSubmitBtn').disabled=false;}
+}
+function closeApiKeyModal(){show('apiKeyModal',false);state.teacher=null;}
+function setSpeechLanguage(lang){state.lang=lang==='en-US'?'en-US':'ko-KR';text('speechLanguageStatus',state.lang==='en-US'?'영어':'한국어');['speechLangKo','modalLangKo'].forEach(function(id){$(id).setAttribute('aria-pressed',String(state.lang==='ko-KR'));});['speechLangEn','modalLangEn'].forEach(function(id){$(id).setAttribute('aria-pressed',String(state.lang==='en-US'));});}
+function setModalSpeechLang(lang){stopModalListening();setSpeechLanguage(lang);startModalListening();}
+function parseSpeechResults(results){
+  var parts=[];
+  for(var i=0;i<results.length;i++){var value=results[i][0].transcript.trim();if(!value)continue;
+    if(parts.length&&value.startsWith(parts[parts.length-1]))parts[parts.length-1]=value;else if(!parts.length||parts[parts.length-1]!==value)parts.push(value);}
+  return parts.join(' ');
+}
+function toggleSpeechRecognition(){hideError();show('voiceModal',true);$('modalVoiceInput').value=$('inputText').value;startModalListening();}
+function closeVoiceModal(){stopModalListening();show('voiceModal',false);}
+function startModalListening(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){text('modalStatusMsg','음성 인식을 지원하지 않아요. 아래에 직접 입력하거나 독립 음성창을 사용해주세요.');return;}
+  stopModalListening();
+  try{
+    var rec=new SR();state.rec=rec;rec.lang=state.lang;rec.continuous=!/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);rec.interimResults=true;
+    rec.onstart=function(){state.listening=true;show('modalPulseRing',true);text('modalStatusMsg','🎙️ 듣고 있어요! 편하게 말씀하세요.');};
+    rec.onresult=function(e){$('modalVoiceInput').value=parseSpeechResults(e.results);};
+    rec.onerror=function(e){text('modalStatusMsg',e.error==='not-allowed'||e.error==='service-not-allowed'?'마이크 권한이 필요해요. 독립 음성창을 열거나 직접 입력해주세요.':'음성 연결을 확인하고 다시 말해주세요.');};
+    rec.onend=function(){state.listening=false;show('modalPulseRing',false);if($('modalVoiceInput').value.trim())text('modalStatusMsg','✅ 내용을 확인·수정한 뒤 완료 및 번역을 눌러주세요.');};
+    rec.start();
+  }catch(e){text('modalStatusMsg','독립 음성창을 열거나 아래에 직접 입력해주세요.');}
+}
+function stopModalListening(){if(state.rec){var old=state.rec;state.rec=null;old.onend=null;old.onerror=null;old.onresult=null;try{old.abort();}catch(ignore){}}state.listening=false;show('modalPulseRing',false);}
+function toggleModalListening(){if(state.listening)stopModalListening();else startModalListening();}
+function restartModalListening(){$('modalVoiceInput').value='';startModalListening();}
+function clearModalVoiceInput(){$('modalVoiceInput').value='';$('modalVoiceInput').focus();}
+function submitModalVoiceResult(){var value=$('modalVoiceInput').value.trim();if(!value){text('modalStatusMsg','말하거나 글자를 입력해주세요.');return;}closeVoiceModal();$('inputText').value=value.slice(0,500);handleInputTextChange();requestTranslation();}
+function voicePopupApp(config){
+  var doc=document,rec=null,listening=false,lang=config.lang;
+  function status(value){doc.getElementById('status').textContent=value;}
+  function stop(){if(rec){try{rec.abort();}catch(ignore){}}listening=false;}
+  function start(){
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){status('음성 인식을 지원하지 않습니다. 아래에 직접 입력해주세요.');return;}
+    stop();rec=new SR();rec.lang=lang;rec.continuous=!/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);rec.interimResults=true;
+    rec.onstart=function(){listening=true;status('🎙️ 듣고 있어요!');};
+    rec.onresult=function(e){var parts=[];for(var i=0;i<e.results.length;i++){var t=e.results[i][0].transcript.trim();if(parts.length&&t.startsWith(parts[parts.length-1]))parts[parts.length-1]=t;else if(t&&parts[parts.length-1]!==t)parts.push(t);}doc.getElementById('voiceText').value=parts.join(' ');};
+    rec.onerror=function(e){status(e.error==='not-allowed'?'주소창의 마이크 권한을 확인하거나 아래에 직접 입력해주세요.':'음성 인식을 다시 시도해주세요.');};
+    rec.onend=function(){listening=false;if(doc.getElementById('voiceText').value.trim())status('✅ 확인·수정하고 완료를 눌러주세요.');};
+    try{rec.start();}catch(e){status('마이크를 다시 눌러주세요.');}
+  }
+  doc.getElementById('mic').onclick=function(){if(listening)stop();else start();};
+  doc.getElementById('ko').onclick=function(){lang='ko-KR';start();};doc.getElementById('en').onclick=function(){lang='en-US';start();};
+  doc.getElementById('restart').onclick=function(){doc.getElementById('voiceText').value='';start();};
+  doc.getElementById('clear').onclick=function(){doc.getElementById('voiceText').value='';};
+  doc.getElementById('cancel').onclick=function(){stop();window.close();};
+  doc.getElementById('done').onclick=function(){var value=doc.getElementById('voiceText').value.trim();if(!value){status('말하거나 글자를 입력해주세요.');return;}stop();if(window.opener)window.opener.postMessage({type:'IN_ENGLISH_VOICE_RESULT',channel:config.channel,text:value},config.origin);window.close();};
+  window.addEventListener('beforeunload',stop);start();
+}
+function openVoicePopup(){
+  stopModalListening();state.channel=uid();var popup=window.open('','inEnglishVoice','width=480,height=570,resizable=yes,scrollbars=yes');
+  if(!popup){text('modalStatusMsg','팝업이 차단되었습니다. 팝업을 허용하거나 직접 입력해주세요.');return;}state.popup=popup;
+  var markup='<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>inEnglish 음성 입력</title><style>body{margin:0;padding:24px;font:15px system-ui,sans-serif;background:#f8fafc;color:#1e293b}h1{font-size:20px}button{border:0;border-radius:12px;padding:12px;margin:3px;background:#e0e7ff;color:#3730a3;font-weight:bold;cursor:pointer}textarea{box-sizing:border-box;width:100%;height:145px;margin:15px 0;padding:14px;border:2px solid #c7d2fe;border-radius:16px;font:18px system-ui,sans-serif}#mic{font-size:30px;background:#ffe4e6}#done{background:#4f46e5;color:white}#status{min-height:42px;line-height:1.5}</style></head><body><h1>🎙️ inEnglish 음성 입력</h1><div><button id="ko">한국어</button><button id="en">영어</button></div><p id="status">마이크에 연결하고 있어요.</p><button id="mic">🎙️</button><textarea id="voiceText" maxlength="500" placeholder="인식된 내용을 직접 고칠 수 있어요."></textarea><div><button id="clear">지우기</button><button id="restart">다시 말하기</button></div><p><button id="cancel">취소</button><button id="done">완료 및 번역</button></p></body></html>';
+  popup.document.open();popup.document.write(markup);popup.document.close();
+  var script=popup.document.createElement('script');script.textContent='('+voicePopupApp.toString()+')('+JSON.stringify({lang:state.lang,origin:window.location.origin,channel:state.channel})+');';popup.document.body.appendChild(script);
+}
+var actions={selectGrade:selectGrade,toggleBoardMode:toggleBoardMode,requestTeacherSettings:requestTeacherSettings,closePinModal:closePinModal,submitTeacherPin:submitTeacherPin,
+  requestTranslation:requestTranslation,clearInput:clearInput,toggleSpeechRecognition:toggleSpeechRecognition,setSpeechLanguage:setSpeechLanguage,
+  speakResult:speakResult,toggleTtsSpeed:toggleTtsSpeed,copyResult:copyResult,closeApiKeyModal:closeApiKeyModal,closeVoiceModal:closeVoiceModal,
+  setModalSpeechLang:setModalSpeechLang,toggleModalListening:toggleModalListening,restartModalListening:restartModalListening,clearModalVoiceInput:clearModalVoiceInput,
+  submitModalVoiceResult:submitModalVoiceResult,openVoicePopup:openVoicePopup};
+function init(){
+  if(document.body.dataset.initialized)return;document.body.dataset.initialized='true';
+  try{localStorage.removeItem('IN_ENGLISH_API_KEY');localStorage.removeItem('IN_ENGLISH_TEACHER_PIN');}catch(ignore){}
+  document.addEventListener('click',function(e){var button=e.target.closest('[data-action]');if(!button||button.disabled)return;var fn=actions[button.dataset.action];if(fn){e.preventDefault();fn(button.dataset.grade||button.dataset.lang);}});
+  $('inputText').addEventListener('input',handleInputTextChange);$('inputText').addEventListener('keydown',handleKeyDown);
+  $('gradeSelectDropdown').addEventListener('change',function(e){selectGrade(e.target.value);});
+  $('teacherPinForm').addEventListener('submit',function(e){e.preventDefault();submitTeacherPin();});
+  $('pinCodeInput').addEventListener('keydown',function(e){if(e.isComposing&&e.key==='Enter')e.preventDefault();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePinModal();closeApiKeyModal();closeVoiceModal();}});
+  window.addEventListener('message',function(e){
+    if(e.source!==state.popup||e.origin!==window.location.origin||!e.data||e.data.type!=='IN_ENGLISH_VOICE_RESULT'||e.data.channel!==state.channel||typeof e.data.text!=='string')return;
+    closeVoiceModal();$('inputText').value=e.data.text.slice(0,500);handleInputTextChange();requestTranslation();state.popup=null;state.channel='';
+  });
+  selectGrade(3);setSpeechLanguage('ko-KR');handleInputTextChange();
+  ensureSession().catch(function(e){showError(e.message);});
+}
+window.addEventListener('error',function(){showError('화면 처리 중 문제가 생겼습니다. 새로고침 후 다시 시도해주세요.');setLoading(false);});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();</script></body></html>

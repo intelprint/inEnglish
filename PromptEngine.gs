@@ -9,6 +9,9 @@
  */
 
 var PromptEngine = (function() {
+  // Extracted from the supplied 2022 curriculum PDF, pp. 258–290 (PDF pages 264–296).
+  // Includes printed variants of the 800 recommended elementary word families.
+  var ELEMENTARY_VOCABULARY = "a, about, above, across, act, actual, add, address, adult, aeroplane, afraid, after, afternoon, again, against, age, ago, agree, ahead, air, airplane, album, all, almost, alone, along, already, alright, also, always, an, and, animal, another, answer, any, apartment, apple, area, arm, around, arrive, art, as, ask, at, aunt, autumn, away, baby, back, bad, badminton, bag, bake, ball, banana, bank, base, baseball, basket, basketball, bat, bath, be, beach, bear, beauty, because, become, bed, bee, beef, before, begin, behind, believe, bell, below, belt, beside, between, big, bike, bill, bird, birth, biscuit, black, blood, blue, board, boat, body, bone, book, borrow, both, bottle, bottom, box, boy, brave, bread, break, breakfast, bridge, bright, bring, brother, brown, brush, build, burn, bus, business, busy, but, butter, button, buy, by, bye, cake, call, camera, camp, campaign, can, candy, cap, car, card, care, carrot, carry, case, cash, casual, cat, catch, center, certain, chair, chance, change, cheap, check, cheese, cheque, chicken, child, chocolate, choose, church, circle, city, clarify, class, classic, classify, clean, clear, clever, climb, clock, close, clothes, cloud, club, coat, coffee, cold, collect, college, color, colour, come, comic, company, compute, computer, condition, congratulate, control, cook, cookie, cooky, cool, corner, cost, could, country, couple, course, court, cousin, cover, cow, crayon, cream, cross, cry, culture, cup, curtain, customer, cut, dad, daddy, dance, danger, dark, date, daughter, day, dead, death, decide, decision, deep, delicious, design, desk, dialog, dialogue, die, difficult, dinner, disagree, disclose, discover, discuss, displace, do, doctor, dog, doll, door, double, doughnut, down, draw, drawer, dream, dress, drink, drive, drop, drum, dry, duck, during, ear, early, earth, east, eat, egg, eight, elephant, eleven, embody, enclose, end, energy, enough, ensure, enter, evening, every, example, exercise, eye, face, fact, factual, fail, fall, family, fan, far, farm, fast, fat, father, favorite, favourite, feel, festival, field, fight, file, fill, film, find, fine, finger, finish, fire, first, fish, five, fix, floor, flower, fly, focus, food, fool, foot, football, for, forest, forget, fork, form, formal, formation, four, fox, free, fresh, friend, friendship, from, front, fruit, full, fun, future, game, garden, gas, gentleman, get, girl, give, glad, glass, go, goal, god, gold, good, goodbye, goods, grandfather, grape, grass, gray, great, green, grey, ground, group, grow, guess, guitar, gum, guy, habit, hair, half, hamburger, hand, hang, happy, hard, hardly, hat, hate, have, he, head, heart, heat, heavy, hello, helmet, help, here, hero, hey, hi, high, hike, hill, history, hit, hobby, hold, holiday, home, homework, honest, hope, horse, hospital, hot, hour, house, how, however, human, hundred, hunt, hurry, husband, i, ice, idea, if, image, in, inside, interact, international, internet, into, introduce, invite, issue, it, jacket, jam, job, join, juice, jump, just, keep, key, kick, kid, kill, kind, king, kiss, kitchen, knife, know, lady, lake, land, large, laser, last, late, lazy, learn, left, leg, lesson, letter, library, lie, life, light, like, likely, line, lion, lip, listen, literal, little, live, long, look, love, low, luck, lunch, mad, mail, make, man, many, map, marathon, market, marry, math, mathematics, maths, may, meat, medal, meet, member, membership, memory, middle, might, milk, mind, miss, mistake, model, mom, mommy, money, monkey, month, moon, morning, mother, mountain, mouse, mouth, move, movie, much, music, must, name, nation, nature, nay, near, neck, need, never, new, news, newspaper, next, nice, night, nine, no, nope, north, nose, not, note, notebook, nothing, notion, now, number, nurse, of, off, office, official, often, oil, ok, okay, okey, old, on, one, only, open, or, orange, out, over, page, paint, pants, paper, parent, park, part, partner, party, pass, pay, pen, pencil, people, phone, piano, pick, picture, pig, pilot, pink, pizza, place, plan, plastic, play, pleasant, please, point, police, poor, potato, power, present, pretty, prince, print, problem, program, programme, project, puppy, push, put, queen, question, quick, quiet, quiz, rabbit, race, racial, radio, rain, read, ready, recreation, red, remember, restaurant, restroom, return, ribbon, rich, right, ring, river, road, robot, rock, room, rose, run, sad, safe, salad, sale, salt, same, sand, sandwich, save, say, school, science, scissors, score, sea, season, second, secondary, see, sell, send, service, set, seven, she, ship, shirt, shoe, shop, short, should, show, shy, sick, side, sing, sister, sit, six, size, skate, ski, skin, skirt, sky, sleep, slow, small, smell, smile, snow, so, soccer, sock, soft, software, some, son, song, sorry, sound, soup, south, space, spaghetti, speak, speed, spoon, sport, spring, staff, stand, star, start, stay, steak, stone, stop, store, story, street, strong, student, study, style, subway, sugar, summer, sun, sure, swim, table, tail, take, talk, tall, tape, taste, taxi, teach, team, telephone, television, tell, ten, tennis, tent, test, textbook, than, thank, that, the, there, they, thing, think, third, thirst, thirteen, thirty, this, three, ticket, tiger, time, tire, tired, to, today, together, tomato, tomorrow, tonight, too, tooth, top, touch, town, toy, track, train, travel, tree, trial, trip, truck, true, try, turn, twelve, twenty, twice, two, type, ugly, umbrella, uncle, under, understand, up, use, usual, vegetable, very, video, violin, visit, voice, wait, wake, walk, wall, want, war, warm, wash, watch, water, watermelon, way, we, wear, weather, website, wedding, week, weekend, weight, welcome, well, west, wet, what, when, where, white, who, why, wife, will, win, wind, window, wine, winter, wish, with, woman, wood, word, work, world, worry, write, wrong, yeah, year, yellow, yep, yes, yesterday, you, young, zoo";
 
   /**
    * 학년별 2022 개정 교육과정 기준 지침
@@ -16,9 +19,9 @@ var PromptEngine = (function() {
   var GRADE_GUIDELINES = {
     3: {
       title: "초등학교 3학년",
-      vocabLimit: "약 240단어 이내 (기초 알파벳, 인사, 주변 사물, 색깔, 숫자 1~12, 신체, 기초 감정)",
+      vocabLimit: "2022 개정 초등 권장 기본 어휘 800개 중 3학년 교과서의 기초 어휘 우선. 3~4학년군 학습 어휘는 300단어 이내이며, 문장마다 이 수만큼 단어를 쓰라는 뜻이 아님",
       grammarRules: [
-        "평서문 및 간단한 의문문 (3~5단어 내외의 아주 짧은 단문)",
+        "평서문 및 간단한 의문문 (보통 3~8단어의 짧은 단문, 뜻 보존을 위해 필요하면 두 단문으로 나누기)",
         "be동사 현재형 (am, are, is) 및 가장 기초적인 일반동사 (like, have, play, go, see, look)",
         "기초 허가/능력 조동사 can (Can I ~?, I can ~)",
         "명령문/청유문 (Stand up, Let's play)",
@@ -35,7 +38,7 @@ var PromptEngine = (function() {
     },
     4: {
       title: "초등학교 4학년",
-      vocabLimit: "3학년 포함 약 350단어 이내 (시간, 날씨, 요일, 위치, 일과, 간단한 가격)",
+      vocabLimit: "2022 개정 초등 권장 기본 어휘 800개 중 3~4학년군 교과서의 쉬운 어휘 우선. 3~4학년군 학습 어휘는 300단어 이내",
       grammarRules: [
         "기초 의문사 의문문 (What time, Where, How much)",
         "시간/장소 전치사 (in, on, under, at)",
@@ -53,7 +56,7 @@ var PromptEngine = (function() {
     },
     5: {
       title: "초등학교 5학년",
-      vocabLimit: "3~4학년 포함 약 550단어 이내 (장래희망, 취미, 과거 경험, 규칙적인 일상)",
+      vocabLimit: "2022 개정 초등 권장 기본 어휘 800개 중 초등 교과서의 쉬운 어휘. 5~6학년군 새 학습 어휘는 300단어 이내이고 초등 누계는 600단어 이내",
       grammarRules: [
         "규칙 및 주요 불규칙 과거시제 (went, had, ate, saw, did, was, were)",
         "미래 표현 기초 (will, be going to)",
@@ -72,7 +75,7 @@ var PromptEngine = (function() {
     },
     6: {
       title: "초등학교 6학년",
-      vocabLimit: "초등 전체 총 800단어 이내 (비교, 경험, 건강/증상, 계획, 간단한 의견 제시)",
+      vocabLimit: "2022 개정 초등 권장 기본 어휘 800개를 우선 사용. 초등 누계 학습 어휘 수는 600단어 이내이며 권장 기본 어휘 목록의 수와 구별함",
       grammarRules: [
         "기본 형용사/부사의 비교급과 최상급 (-er, -est, more ~)",
         "경험 표현 (Have you ever ~? 또는 Did you ever ~? 수준의 쉬운 질문)",
@@ -107,10 +110,15 @@ var PromptEngine = (function() {
       "1. 대상 학년: **" + info.title + "**",
       "2. 어휘 상한선: " + info.vocabLimit,
       "3. 허용 언어 형식: " + info.grammarRules.join(" / "),
+      "초등 권장 기본 어휘의 대표형과 명시된 변이형: " + ELEMENTARY_VOCABULARY,
+      "위 어휘의 쉬운 굴절형, 문맥에 필요한 고유명사, 수와 단위를 허용합니다. 초등 교과서의 친숙한 어휘를 우선하고 어려운 어휘는 쉬운 말로 설명하세요.",
       "4. **초등학생 수준으로의 의역(Simplification) 원칙**:",
+      "   - 최우선은 원문의 의미 보존입니다. 숫자, 비율, 사람, 물건, 시간, 부정, 의문, 허락, 가능성, 원인과 결과를 임의로 바꾸거나 생략하지 마세요.",
+      "   - '50% 비 올 확률'을 '비가 올 것이다'로 확정하지 마세요. 예: 'It may rain today. (50%)'처럼 쉬운 말과 숫자로 불확실성을 보존하세요.",
+      "   - '체육 수업 취소인가요?'를 '밖에서 놀 수 있나요?'로 바꾸지 말고 수업/취소라는 의도를 쉬운 말로 유지하세요.",
       "   - 학생이 어려운 성인용 단어나 복잡한 문장을 한국어로 입력하더라도, 그대로 직역하지 마십시오.",
       "   - 반드시 '" + info.title + " 교과서'에 나오는 친근하고 쉬운 어휘와 표현으로 바꾸어 번역하십시오.",
-      "   - (예시) '선생님 오늘 미세먼지가 심해서 체육 수업 취소인가요?' -> 3학년: 'Can we play outside today?' / 5학년: 'The air is bad today. Can we play in the gym?'",
+      "   - (예시) '선생님 오늘 미세먼지가 심해서 체육 수업 취소인가요?' -> 'The air is bad today. Do we have PE class?' (필요하면 tip에서 쉬운 표현으로 바꾼 점을 안내)",
       "5. **언어 방향 및 한/영 혼용(Code-switching) 자동 판별**:",
       "   - [한국어만 입력] -> 초등 " + validGrade + "학년 수준의 자연스러운 영어 문장으로 번역 (direction: 'ko-to-en')",
       "   - [영어만 입력] -> 초등학생 눈높이에 맞는 부드럽고 친절한 한국어 문장으로 번역 (direction: 'en-to-ko')",
