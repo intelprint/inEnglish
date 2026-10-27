@@ -56,6 +56,18 @@ function doGet(e) {
     return ContentService.createTextOutput('구글 시트 조회 오류: ' + (sRes.error || '알 수 없음'));
   }
 
+  // GitHub Pages 등 외부 프론트엔드에서 번역 완료 후 히스토리 직접 기록 요청 시 (CORS 프리)
+  if (e && e.parameter && e.parameter.action === 'logHistory') {
+    var lGrade = parseInt(e.parameter.grade, 10) || 3;
+    var lText = decodeURIComponent(e.parameter.text || '');
+    var lTrans = decodeURIComponent(e.parameter.translation || '');
+    var lDir = e.parameter.direction || 'ko-to-en';
+    var lModel = e.parameter.model || 'gemini-3.8-flash';
+    logTranslationToSheet(lGrade, lText, lTrans, lDir, lModel);
+    return ContentService.createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   // GitHub Pages 등 외부 프론트엔드에서 GET 호출 시 번역 지원 (CORS 프리)
   if (e && e.parameter && e.parameter.action === 'translate' && e.parameter.text) {
     var getPayload = {
@@ -419,5 +431,23 @@ function getHistorySheetUrl() {
   } catch(err) {
     return { success: true, url: 'https://docs.google.com/spreadsheets/d/' + DEFAULT_HISTORY_SHEET_ID + '/edit' };
   }
+}
+
+/**
+ * 구글 시트 권한 승인 및 즉시 테스트 함수 (에디터에서 '실행' 시 1회 승인 팝업 유도)
+ */
+function testAuth() {
+  var ss = SpreadsheetApp.openById(DEFAULT_HISTORY_SHEET_ID);
+  var sheet = ss.getSheetByName('번역기록') || ss.getActiveSheet();
+  sheet.setName('번역기록');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['일시 (날짜 및 시간)', '학년', '입력 내용 (한글/영어)', '번역 결과', '번역 방향', '사용 AI 모델']);
+    sheet.getRange(1, 1, 1, 6).setBackground('#4338ca').setFontColor('#ffffff').setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([nowStr, '선생님', '권한 연동 테스트', '연결 성공!', 'ko-to-en', 'system']);
+  Logger.log('Auth check successful! Sheet URL: ' + ss.getUrl());
+  return { success: true, url: ss.getUrl() };
 }
 
