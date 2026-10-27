@@ -921,9 +921,11 @@
       const langName = (lang === 'en-US') ? '영어' : '한국어';
       const promptTip = (lang === 'en-US') ? 'Speak in English...' : '선생님과 친구의 목소리를 듣고 있어요';
 
+      const sTag = '<' + 'script';
+      const sEnd = '<' + '/script>';
       const popupHtml = '<!DOCTYPE html>' +
         '<html lang="ko"><head><meta charset="UTF-8"><title>inEnglish 음성 입력</title>' +
-        '<script src="https://cdn.tailwindcss.com"><\/script>' +
+        sTag + ' src="https://cdn.tailwindcss.com">' + sEnd +
         '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>' +
         '<style>' +
         'body{font-family:Pretendard,sans-serif;}' +
@@ -965,7 +967,7 @@
         '    </button>' +
         '  </div>' +
         '</div>' +
-        '<script>' +
+        sTag + '>' +
         'let activeLang = "' + lang + '";' +
         'let rec = null;' +
         'let isListening = false;' +
@@ -1054,7 +1056,7 @@
         '  window.close();' +
         '}' +
         'startRec();' +
-        '<\/script></body></html>';
+        sEnd + '</body></html>';
 
       popup.document.open();
       popup.document.write(popupHtml);
@@ -1071,7 +1073,20 @@
           }
         }).getHistorySheetUrl();
       } else {
-        alert('Google Apps Script 환경에서만 구글 시트가 열립니다.');
+        // GitHub Pages 등 외부 웹 환경: GAS 백엔드를 통해 안전하게 시트 URL 조회 및 새 탭 오픈
+        const fetchUrl = `${GAS_WEBAPP_URL}?action=getSheetUrl`;
+        fetch(fetchUrl)
+          .then(res => res.json())
+          .then(res => {
+            if (res && res.success && res.url) {
+              window.open(res.url, '_blank');
+            } else {
+              alert('구글 시트 URL을 조회하지 못했습니다: ' + (res.error || '잠시 후 다시 시도해주세요.'));
+            }
+          })
+          .catch(err => {
+            alert('구글 시트 연결 중 오류가 발생했습니다: ' + err.message);
+          });
       }
     }
 
@@ -1193,9 +1208,9 @@
 }`;
     }
 
-    function callDirectGemini(payload, apiKey) {
+    async function callDirectGemini(payload, apiKey) {
       const systemInstruction = buildClientSystemInstruction(payload.grade);
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const models = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
       const body = {
         contents: [{
           parts: [{ text: payload.text }]
@@ -1208,35 +1223,41 @@
         }
       };
 
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-      .then(res => res.json())
-      .then(resData => {
+      let lastError = null;
+      for (const model of models) {
         try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          const resData = await res.json();
           if (resData.error) {
-            throw new Error(resData.error.message || 'API 오류');
+            lastError = new Error(resData.error.message || 'API 오류');
+            continue; // 모델 에러 시 다음 모델로 즉시 폴백
+          }
+          if (!resData.candidates || !resData.candidates[0] || !resData.candidates[0].content) {
+            lastError = new Error('모델 응답 형식이 올바르지 않습니다.');
+            continue;
           }
           const jsonText = resData.candidates[0].content.parts[0].text;
           const parsed = JSON.parse(jsonText);
-          onTranslateSuccess({ success: true, data: parsed });
+          onTranslateSuccess({ success: true, data: parsed, usedModel: model });
 
           // 비동기로 'inEnglish' 구글 시트에 학생 검색 히스토리 누적 기록 (fire-and-forget)
           try {
             const logUrl = `${GAS_WEBAPP_URL}?action=translate&grade=${payload.grade}&text=${encodeURIComponent(payload.text)}`;
             fetch(logUrl, { mode: 'no-cors' }).catch(()=>{});
           } catch(e) {}
+          return; // 성공 시 종료
         } catch(e) {
-          showError('응답 처리 중 오류: ' + e.message);
-          setLoading(false);
+          lastError = e;
         }
-      })
-      .catch(err => {
-        showError('Gemini API 호출 중 오류: ' + err.message);
-        setLoading(false);
-      });
+      }
+
+      showError('응답 처리 중 오류: ' + (lastError ? lastError.message : 'Gemini 모델을 호출할 수 없습니다.'));
+      setLoading(false);
     }
 
     function onTranslateSuccess(response) {
