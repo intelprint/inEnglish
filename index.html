@@ -180,8 +180,8 @@
           <span id="boardModeText" class="hidden sm:inline">칠판 모드</span>
         </button>
 
-        <button onclick="openApiKeyModal()" 
-          title="Gemini API 키 설정"
+        <button id="settingsBtn" onclick="requestTeacherSettings()" 
+          title="교사용 설정 (선생님 전용 🔒)"
           class="p-1.5 rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100 btn-bounce">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -460,6 +460,25 @@
         </button>
       </div>
 
+      <!-- 교사용 설정 잠금 비밀번호 변경 섹션 -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-800 flex items-center space-x-1">
+            <span>🔒</span>
+            <span>교사용 설정 비밀번호</span>
+          </span>
+          <p class="text-[11px] text-slate-400 mt-0.5">학생들의 무단 설정 접근을 방지합니다 (기본값: 0000).</p>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <input type="password" id="teacherPinInput" maxlength="8" placeholder="새 비번" 
+            class="w-20 px-2 py-1 border border-slate-200 rounded-xl text-xs font-bold text-center bg-slate-50 focus:bg-white focus:outline-none focus:border-brand-500">
+          <button type="button" onclick="saveTeacherPin()" 
+            class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs btn-bounce">
+            변경
+          </button>
+        </div>
+      </div>
+
       <div class="flex items-center justify-end space-x-2 pt-1">
         <button type="button" onclick="closeApiKeyModal()" 
           class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-bold">
@@ -606,9 +625,78 @@
       }
     }
 
+    // 교사용 설정 잠금 비밀번호 관리 (기본값: 0000)
+    let inMemoryTeacherPin = '0000';
+    function getStoredTeacherPin() {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const p = localStorage.getItem('IN_ENGLISH_TEACHER_PIN');
+          if (p) return p;
+        }
+      } catch (e) {}
+      return inMemoryTeacherPin || '0000';
+    }
+
+    function setStoredTeacherPin(pin) {
+      inMemoryTeacherPin = pin || '0000';
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('IN_ENGLISH_TEACHER_PIN', pin || '0000');
+        }
+      } catch (e) {}
+    }
+
+    function requestTeacherSettings() {
+      const pin = prompt('👩‍🏫 [교사용 설정 잠금]\n학생들의 무단 접근을 방지하기 위한 설정입니다.\n비밀번호(4자리)를 입력해주세요 (기본값: 0000):');
+      if (pin === null) return; // 취소 클릭 시
+
+      const savedPin = getStoredTeacherPin();
+      if (pin.trim() === savedPin) {
+        openApiKeyModal();
+      } else {
+        alert('⚠️ 비밀번호가 일치하지 않습니다. (선생님 전용 설정입니다)');
+      }
+    }
+
+    function saveTeacherPin() {
+      const newPin = document.getElementById('teacherPinInput').value.trim();
+      if (!newPin) {
+        alert('새 비밀번호를 입력해주세요!');
+        return;
+      }
+      setStoredTeacherPin(newPin);
+      document.getElementById('teacherPinInput').value = '';
+      alert(`교사용 비밀번호가 [${newPin}] (으)로 안전하게 변경되었습니다! ✨`);
+    }
+
+    // 모든 버튼 DOM 이벤트 직접 바인딩 (GAS iframe sandbox에서 onclick 무반응 완벽 방어)
+    function bindAllEvents() {
+      for (let g = 3; g <= 6; g++) {
+        const btn = document.getElementById(`gradeBtn-${g}`);
+        if (btn) btn.onclick = () => selectGrade(g);
+      }
+      const bMap = [
+        ['translateBtn', requestTranslation],
+        ['micBtn', toggleSpeechRecognition],
+        ['speechLangKo', () => setSpeechLanguage('ko-KR')],
+        ['speechLangEn', () => setSpeechLanguage('en-US')],
+        ['clearBtn', clearInput],
+        ['boardModeBtn', toggleBoardMode],
+        ['settingsBtn', requestTeacherSettings],
+        ['speakBtn', speakResult],
+        ['copyBtn', copyResult],
+        ['ttsSpeedBtn', toggleTtsSpeed]
+      ];
+      bMap.forEach(([id, fn]) => {
+        const el = document.getElementById(id);
+        if (el) el.onclick = fn;
+      });
+    }
+
     // 신뢰성 높은 초기화 실행기 (DOM 준비 상태에 관계없이 즉시 실행 보장)
     function initApp() {
       try {
+        bindAllEvents();
         const savedKey = getStoredApiKey();
         const apiInput = document.getElementById('apiKeyInput');
         if (apiInput && savedKey) {
@@ -626,6 +714,8 @@
     } else {
       initApp();
     }
+    // 추가 안전 타이머 (GAS iframe 지연 로드 방어)
+    setTimeout(initApp, 200);
 
     /**
      * 학년 선택 처리 (알약 탭 + 드롭다운 동기화)
@@ -1606,6 +1696,34 @@
       }
       renderResult(mock);
     }
+
+    // 전역 함수 명시적 window 등록 (Google Apps Script iframe 샌드박스 완벽 호환)
+    window.selectGrade = selectGrade;
+    window.onGradeDropdownChange = onGradeDropdownChange;
+    window.handleInputTextChange = handleInputTextChange;
+    window.clearInput = clearInput;
+    window.handleKeyDown = handleKeyDown;
+    window.toggleSpeechRecognition = toggleSpeechRecognition;
+    window.openVoiceModal = openVoiceModal;
+    window.closeVoiceModal = closeVoiceModal;
+    window.setModalSpeechLang = setModalSpeechLang;
+    window.toggleModalListening = toggleModalListening;
+    window.restartModalListening = restartModalListening;
+    window.clearModalVoiceInput = clearModalVoiceInput;
+    window.submitModalVoiceResult = submitModalVoiceResult;
+    window.openVoicePopup = openVoicePopup;
+    window.openHistorySheet = openHistorySheet;
+    window.setSpeechLanguage = setSpeechLanguage;
+    window.requestTranslation = requestTranslation;
+    window.speakResult = speakResult;
+    window.toggleTtsSpeed = toggleTtsSpeed;
+    window.copyResult = copyResult;
+    window.toggleBoardMode = toggleBoardMode;
+    window.openApiKeyModal = openApiKeyModal;
+    window.closeApiKeyModal = closeApiKeyModal;
+    window.saveApiKey = saveApiKey;
+    window.requestTeacherSettings = requestTeacherSettings;
+    window.saveTeacherPin = saveTeacherPin;
   </script>
 
 </body>
