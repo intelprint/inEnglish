@@ -40,6 +40,13 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify(res, null, 2)).setMimeType(ContentService.MimeType.JSON);
   }
 
+  // GitHub Pages 등 외부 프론트엔드에서 구글 시트 URL 요청 시
+  if (e && e.parameter && e.parameter.action === 'getSheetUrl') {
+    var sheetRes = getHistorySheetUrl();
+    return ContentService.createTextOutput(JSON.stringify(sheetRes))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   // GitHub Pages 등 외부 프론트엔드에서 GET 호출 시 번역 지원 (CORS 프리)
   if (e && e.parameter && e.parameter.action === 'translate' && e.parameter.text) {
     var getPayload = {
