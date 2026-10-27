@@ -899,6 +899,46 @@
       }
     }
 
+    /**
+     * Android Chrome 및 태블릿 특유의 음성 버퍼 중복/에코 방지 정제기
+     */
+    function deduplicateRepeatedPhrases(str) {
+      if (!str) return '';
+      str = str.trim();
+
+      // 1. 반쪽 동일 반복 패턴 제거 (예: "ABC ABC" -> "ABC", "ABCABC" -> "ABC")
+      let changed = true;
+      while (changed) {
+        changed = false;
+        const len = str.length;
+        const half = Math.floor(len / 2);
+        for (let h = half; h >= 4; h--) {
+          const left = str.substring(0, h).trim();
+          const right = str.substring(h).trim();
+          if (left && left === right) {
+            str = left;
+            changed = true;
+            break;
+          }
+        }
+      }
+
+      // 2. 단어/어절 단위 연속 중복 어구 제거 (예: "하나둘셋 하나둘셋" -> "하나둘셋")
+      const words = str.split(/\s+/);
+      if (words.length >= 2) {
+        const cleaned = [];
+        for (let i = 0; i < words.length; i++) {
+          if (i > 0 && words[i] === words[i-1]) {
+            continue; // 직전 단어와 완벽히 동일한 연속 반복 무시
+          }
+          cleaned.push(words[i]);
+        }
+        str = cleaned.join(' ');
+      }
+
+      return str;
+    }
+
     function startModalListening() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       const statusEl = document.getElementById('modalStatusMsg');
@@ -917,7 +957,9 @@
           try { modalRec.abort(); } catch(e) {}
         }
         modalRec = new SR();
-        modalRec.continuous = true;
+        // 모바일/태블릿은 안드로이드 음성인식 엔진 버그 방지를 위해 continuous=false 설정 (자연스러운 발화 종료 시 자동 마감)
+        const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+        modalRec.continuous = !isMobileOrTablet;
         modalRec.interimResults = true;
         modalRec.lang = modalSpeechLang;
 
@@ -932,18 +974,41 @@
         };
 
         modalRec.onresult = function(e) {
-          let final = '';
-          let interim = '';
-          for (let i = 0; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-              final += e.results[i][0].transcript;
-            } else {
-              interim += e.results[i][0].transcript;
+          let fullText = '';
+
+          // 1. Android/태블릿 누적형 엔진 감지
+          // Android Chrome은 e.results에 매번 전체 문장을 누적하여 갱신하므로 단순 합산 시
+          // '안녕하세요안녕하세요 저는안녕하세요...' 처럼 기하급수적으로 중복됩니다.
+          if (e.results.length > 1) {
+            const first = (e.results[0][0].transcript || '').trim();
+            const last = (e.results[e.results.length - 1][0].transcript || '').trim();
+            if (first && (last.startsWith(first) || last.indexOf(first) !== -1)) {
+              fullText = last;
             }
           }
-          const full = (final + (interim ? ' ' + interim : '')).trim();
-          if (full) {
-            document.getElementById('modalVoiceInput').value = full;
+
+          // 2. 누적형이 아닌 경우 (데스크톱 등 각 results[i]가 별개 청크인 경우):
+          if (!fullText) {
+            let parts = [];
+            for (let i = 0; i < e.results.length; ++i) {
+              const piece = (e.results[i][0].transcript || '').trim();
+              if (!piece) continue;
+
+              // 이전 파트의 상위 문장(수정본)이면 교체
+              if (parts.length > 0 && piece.startsWith(parts[parts.length - 1])) {
+                parts[parts.length - 1] = piece;
+              } else if (!parts.includes(piece)) {
+                parts.push(piece);
+              }
+            }
+            fullText = parts.join(' ').trim();
+          }
+
+          // 3. 인접 반복 어구 정제
+          fullText = deduplicateRepeatedPhrases(fullText);
+
+          if (fullText) {
+            document.getElementById('modalVoiceInput').value = fullText;
           }
         };
 
@@ -968,8 +1033,10 @@
         modalRec.onend = function() {
           isModalListening = false;
           if (ringEl) ringEl.classList.add('hidden');
-          const val = document.getElementById('modalVoiceInput').value.trim();
-          if (val) {
+          const rawVal = document.getElementById('modalVoiceInput').value.trim();
+          const cleanVal = deduplicateRepeatedPhrases(rawVal);
+          document.getElementById('modalVoiceInput').value = cleanVal;
+          if (cleanVal) {
             if (statusEl) {
               statusEl.textContent = "✅ 인식이 끝났어요. 글자를 확인하고 수정한 뒤 [완료 및 번역]을 누르세요!";
               statusEl.className = "text-xs font-extrabold text-emerald-600";
@@ -1101,6 +1168,31 @@
         'let isListening = false;' +
         'let finalTranscript = "";' +
         'const SR = window.SpeechRecognition || window.webkitSpeechRecognition;' +
+        'function dedupe(str) {' +
+        '  if (!str) return "";' +
+        '  str = str.trim();' +
+        '  let changed = true;' +
+        '  while (changed) {' +
+        '    changed = false;' +
+        '    const len = str.length;' +
+        '    const half = Math.floor(len / 2);' +
+        '    for (let h = half; h >= 4; h--) {' +
+        '      const left = str.substring(0, h).trim();' +
+        '      const right = str.substring(h).trim();' +
+        '      if (left && left === right) { str = left; changed = true; break; }' +
+        '    }' +
+        '  }' +
+        '  const words = str.split(/\\s+/);' +
+        '  if (words.length >= 2) {' +
+        '    const cln = [];' +
+        '    for (let i = 0; i < words.length; i++) {' +
+        '      if (i > 0 && words[i] === words[i-1]) continue;' +
+        '      cln.push(words[i]);' +
+        '    }' +
+        '    str = cln.join(" ");' +
+        '  }' +
+        '  return str;' +
+        '}' +
         'function startRec() {' +
         '  if (!SR) {' +
         '    document.getElementById("popupInput").value = "브라우저가 음성 인식을 지원하지 않습니다. (Chrome 권장)";' +
@@ -1109,7 +1201,8 @@
         '  try {' +
         '    if (rec) { rec.abort(); }' +
         '    rec = new SR();' +
-        '    rec.continuous = true;' +
+        '    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);' +
+        '    rec.continuous = !isMobile;' +
         '    rec.interimResults = true;' +
         '    rec.lang = activeLang;' +
         '    rec.onstart = function() {' +
@@ -1119,20 +1212,27 @@
         '      document.getElementById("statusMsg").className = "text-xs font-extrabold text-indigo-600";' +
         '    };' +
         '    rec.onresult = function(e) {' +
-        '      let final = "";' +
-        '      let interim = "";' +
-        '      for (let i = 0; i < e.results.length; ++i) {' +
-        '        if (e.results[i].isFinal) {' +
-        '          final += e.results[i][0].transcript;' +
-        '        } else {' +
-        '          interim += e.results[i][0].transcript;' +
+        '      let full = "";' +
+        '      if (e.results.length > 1) {' +
+        '        const f = (e.results[0][0].transcript || "").trim();' +
+        '        const l = (e.results[e.results.length - 1][0].transcript || "").trim();' +
+        '        if (f && (l.startsWith(f) || l.indexOf(f) !== -1)) { full = l; }' +
+        '      }' +
+        '      if (!full) {' +
+        '        let parts = [];' +
+        '        for (let i = 0; i < e.results.length; ++i) {' +
+        '          const p = (e.results[i][0].transcript || "").trim();' +
+        '          if (!p) continue;' +
+        '          if (parts.length > 0 && p.startsWith(parts[parts.length - 1])) {' +
+        '            parts[parts.length - 1] = p;' +
+        '          } else if (!parts.includes(p)) {' +
+        '            parts.push(p);' +
+        '          }' +
         '        }' +
+        '        full = parts.join(" ").trim();' +
         '      }' +
-        '      finalTranscript = final;' +
-        '      const full = (final + (interim ? " " + interim : "")).trim();' +
-        '      if (full) {' +
-        '        document.getElementById("popupInput").value = full;' +
-        '      }' +
+        '      full = dedupe(full);' +
+        '      if (full) { document.getElementById("popupInput").value = full; }' +
         '    };' +
         '    rec.onerror = function(err) {' +
         '      console.warn("rec error:", err.error);' +
@@ -1144,7 +1244,8 @@
         '    rec.onend = function() {' +
         '      isListening = false;' +
         '      document.getElementById("pulseRing").classList.add("hidden");' +
-        '      const val = document.getElementById("popupInput").value.trim();' +
+        '      const val = dedupe(document.getElementById("popupInput").value.trim());' +
+        '      document.getElementById("popupInput").value = val;' +
         '      if (val) {' +
         '        document.getElementById("statusMsg").textContent = "✅ 인식이 끝났어요. 글자를 확인하고 수정한 뒤 [완료 및 번역]을 누르세요!";' +
         '        document.getElementById("statusMsg").className = "text-xs font-extrabold text-emerald-600";' +
