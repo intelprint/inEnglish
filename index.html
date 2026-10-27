@@ -427,6 +427,42 @@
   </footer>
 
   <!-- ===============================
+       선생님 전용 보안 PIN 입력 모달 (전자칠판 * 마스킹 보호 & 엔터 즉시 제출)
+  =============================== -->
+  <div id="teacherPinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 text-center animate-scaleUp">
+      <div class="flex flex-col items-center space-y-2">
+        <div class="w-12 h-12 rounded-full bg-indigo-50 border border-brand-100 flex items-center justify-center text-2xl">
+          🔒
+        </div>
+        <h2 class="text-base font-extrabold text-slate-800">선생님 전용 설정 인증</h2>
+        <p class="text-xs text-slate-500 max-w-xs leading-relaxed">
+          학생들의 무단 설정을 방지하기 위한 보안 절차입니다.<br>선생님 비밀번호를 입력해주세요.
+        </p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitTeacherPin(); return false;" class="flex flex-col space-y-4">
+        <div class="py-2">
+          <input type="password" id="pinCodeInput" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••"
+            onkeydown="if(event.key === 'Enter'){ event.preventDefault(); submitTeacherPin(); }"
+            class="w-44 mx-auto text-center text-3xl tracking-widest font-mono py-2.5 px-3 border-2 border-indigo-200 rounded-2xl focus:border-brand-600 focus:outline-none bg-slate-50 focus:bg-white text-slate-800 transition-all shadow-inner">
+        </div>
+
+        <div class="flex items-center justify-center space-x-2 pt-1">
+          <button type="submit" id="pinSubmitBtn"
+            class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-extrabold shadow-sm transition-all btn-bounce">
+            확인
+          </button>
+          <button type="button" onclick="closePinModal()" 
+            class="px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 text-xs font-bold transition-all">
+            취소
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===============================
        API 키 설정 모달 (선생님 전용)
   =============================== -->
   <div id="apiKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
@@ -535,7 +571,10 @@
           <label for="modalVoiceInput" class="text-xs font-bold text-slate-700 flex items-center space-x-1">
             <span>✏️ 인식된 내용 (필요한 경우 키보드로 직접 수정하세요):</span>
           </label>
-          <button type="button" onclick="clearModalVoiceInput()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">지우기</button>
+          <button type="button" onclick="clearModalVoiceInput()" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-extrabold text-xs transition-all">
+            <span>🗑️</span>
+            <span>지우기</span>
+          </button>
         </div>
         <textarea id="modalVoiceInput" rows="3"
           class="w-full p-3.5 bg-slate-50 focus:bg-white rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 text-base font-bold text-slate-800 leading-relaxed resize-none focus:outline-none shadow-inner"
@@ -601,18 +640,20 @@
       ]
     };
 
-    // 안전한 로컬 저장소 헬퍼 (GAS iframe 환경에서 SecurityError 완벽 방어)
+    // 2022 개정 교육과정 초등 영어 번역 전용 기본 탑재 Gemini API 키 (학생 첫 접속 즉시 사용 가능)
+    const DEFAULT_API_KEY = 'AIzaSyAKQy-OIFFgsUtwNDSm3aG5khhBLSo848Y';
     let inMemoryApiKey = '';
+
     function getStoredApiKey() {
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
           const k = localStorage.getItem('IN_ENGLISH_API_KEY');
-          if (k) return k;
+          if (k && k.trim()) return k.trim();
         }
       } catch (e) {
         console.warn('localStorage access restricted in this frame:', e);
       }
-      return inMemoryApiKey;
+      return inMemoryApiKey || DEFAULT_API_KEY;
     }
 
     function setStoredApiKey(key) {
@@ -651,15 +692,40 @@
       } catch (e) {}
     }
 
+    /**
+     * 교사용 설정 열기 (전자칠판 * 마스킹 보호 모달 실행)
+     */
     function requestTeacherSettings() {
-      const pin = prompt('🔒 [선생님 전용 보안 설정]\n학생들의 설정 접근 및 API 키 수정을 방지하기 위한 보안 절차입니다.\n선생님 비밀번호를 입력해주세요:');
-      if (pin === null) return; // 취소 클릭 시
+      const pinInput = document.getElementById('pinCodeInput');
+      if (pinInput) pinInput.value = '';
+      const modal = document.getElementById('teacherPinModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          if (pinInput) pinInput.focus();
+        }, 50);
+      }
+    }
 
+    function closePinModal() {
+      const modal = document.getElementById('teacherPinModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function submitTeacherPin() {
+      const pinInput = document.getElementById('pinCodeInput');
+      const pin = pinInput ? pinInput.value.trim() : '';
       const savedPin = getStoredTeacherPin();
-      if (pin.trim() === savedPin) {
+
+      if (pin === savedPin) {
+        closePinModal();
         openApiKeyModal();
       } else {
         alert('⚠️ 비밀번호가 일치하지 않습니다. (선생님 전용 메뉴입니다)');
+        if (pinInput) {
+          pinInput.value = '';
+          pinInput.focus();
+        }
       }
     }
 
@@ -917,37 +983,108 @@
       if (!str) return '';
       str = str.trim();
 
-      // 1. 반쪽 동일 반복 패턴 제거 (예: "ABC ABC" -> "ABC", "ABCABC" -> "ABC")
-      let changed = true;
-      while (changed) {
-        changed = false;
-        const len = str.length;
-        const half = Math.floor(len / 2);
-        for (let h = half; h >= 4; h--) {
-          const left = str.substring(0, h).trim();
-          const right = str.substring(h).trim();
-          if (left && left === right) {
-            str = left;
-            changed = true;
+      let prev;
+      do {
+        prev = str;
+        // 1. 단어 목록 분할
+        const words = str.split(/\s+/);
+        const n = words.length;
+
+        // 2. 어절 단위 N회 전체 반복 패턴 제거 (예: "하나둘셋 하나둘셋" -> "하나둘셋", "A B A B" -> "A B")
+        for (let k = 1; k <= Math.floor(n / 2); k++) {
+          if (n % k === 0) {
+            const pattern = words.slice(0, k).join(' ');
+            let allMatch = true;
+            for (let j = k; j < n; j += k) {
+              if (words.slice(j, j + k).join(' ') !== pattern) {
+                allMatch = false;
+                break;
+              }
+            }
+            if (allMatch) {
+              str = pattern;
+              break;
+            }
+          }
+        }
+
+        // 3. 인접 연속 동일 어절 제거
+        const w = str.split(/\s+/);
+        const cleaned = [];
+        for (let i = 0; i < w.length; i++) {
+          if (i > 0 && w[i] === w[i - 1]) {
+            continue;
+          }
+          cleaned.push(w[i]);
+        }
+        str = cleaned.join(' ');
+
+        // 4. 공백 없는 문자열 수준 인접 반복 제거 (예: "안녕하세요안녕하세요" -> "안녕하세요")
+        for (let len = Math.floor(str.length / 2); len >= 2; len--) {
+          for (let i = 0; i <= str.length - len * 2; i++) {
+            const chunk = str.substring(i, i + len);
+            const nextChunk = str.substring(i + len, i + len * 2);
+            if (chunk === nextChunk && chunk.trim().length > 1) {
+              str = str.substring(0, i + len) + str.substring(i + len * 2);
+              break;
+            }
+          }
+        }
+      } while (str !== prev);
+
+      return str.trim();
+    }
+
+    /**
+     * Web Speech API SpeechRecognitionResultList 다중 환경 통합 파서
+     * - Android Chrome: 후속 청크가 이전 청크를 누적 포함하는 버그 완벽 정제
+     * - Desktop Chrome / iOS: 각 청크가 독립 문장인 경우 매끄럽게 연결
+     */
+    function parseSpeechRecognitionResults(results) {
+      if (!results || results.length === 0) return '';
+      const list = [];
+      for (let i = 0; i < results.length; i++) {
+        const t = (results[i] && results[i][0] && results[i][0].transcript) ? results[i][0].transcript.trim() : '';
+        if (t) list.push(t);
+      }
+      if (list.length === 0) return '';
+      if (list.length === 1) return list[0];
+
+      const first = list[0];
+      const last = list[list.length - 1];
+
+      // Android/태블릿 누적형 엔진 감지
+      if (last.startsWith(first) || last.indexOf(first) !== -1 || last.length > first.length * 1.5) {
+        let isCumulative = true;
+        for (let i = 0; i < list.length - 1; i++) {
+          const sub = list[i].substring(0, Math.min(list[i].length, 6));
+          if (sub && !list[i + 1].includes(sub)) {
+            isCumulative = false;
             break;
           }
         }
-      }
-
-      // 2. 단어/어절 단위 연속 중복 어구 제거 (예: "하나둘셋 하나둘셋" -> "하나둘셋")
-      const words = str.split(/\s+/);
-      if (words.length >= 2) {
-        const cleaned = [];
-        for (let i = 0; i < words.length; i++) {
-          if (i > 0 && words[i] === words[i-1]) {
-            continue; // 직전 단어와 완벽히 동일한 연속 반복 무시
-          }
-          cleaned.push(words[i]);
+        if (isCumulative) {
+          return last;
         }
-        str = cleaned.join(' ');
       }
 
-      return str;
+      // 비누적형 (데스크톱 등) 처리 및 중복 배제
+      const merged = [];
+      for (let i = 0; i < list.length; i++) {
+        const cur = list[i];
+        if (merged.length > 0) {
+          const prevItem = merged[merged.length - 1];
+          if (cur.startsWith(prevItem) || cur.includes(prevItem)) {
+            merged[merged.length - 1] = cur;
+            continue;
+          }
+          if (prevItem.includes(cur)) {
+            continue;
+          }
+        }
+        merged.push(cur);
+      }
+      return merged.join(' ');
     }
 
     function startModalListening() {
@@ -985,37 +1122,7 @@
         };
 
         modalRec.onresult = function(e) {
-          let fullText = '';
-
-          // 1. Android/태블릿 누적형 엔진 감지
-          // Android Chrome은 e.results에 매번 전체 문장을 누적하여 갱신하므로 단순 합산 시
-          // '안녕하세요안녕하세요 저는안녕하세요...' 처럼 기하급수적으로 중복됩니다.
-          if (e.results.length > 1) {
-            const first = (e.results[0][0].transcript || '').trim();
-            const last = (e.results[e.results.length - 1][0].transcript || '').trim();
-            if (first && (last.startsWith(first) || last.indexOf(first) !== -1)) {
-              fullText = last;
-            }
-          }
-
-          // 2. 누적형이 아닌 경우 (데스크톱 등 각 results[i]가 별개 청크인 경우):
-          if (!fullText) {
-            let parts = [];
-            for (let i = 0; i < e.results.length; ++i) {
-              const piece = (e.results[i][0].transcript || '').trim();
-              if (!piece) continue;
-
-              // 이전 파트의 상위 문장(수정본)이면 교체
-              if (parts.length > 0 && piece.startsWith(parts[parts.length - 1])) {
-                parts[parts.length - 1] = piece;
-              } else if (!parts.includes(piece)) {
-                parts.push(piece);
-              }
-            }
-            fullText = parts.join(' ').trim();
-          }
-
-          // 3. 인접 반복 어구 정제
+          let fullText = parseSpeechRecognitionResults(e.results);
           fullText = deduplicateRepeatedPhrases(fullText);
 
           if (fullText) {
@@ -1339,7 +1446,7 @@
      * 번역 요청 및 GAS RPC / Direct Gemini API 통신
      * =========================================
      */
-    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxGWxZx9XOfTs4nu8w5adMGT1V-eh1SUhlGgnglWtCdoWabJwe6dNmWBS-B_xjLl05afg/exec';
+    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwrS5Jgbl33dmZ76fuHM6tzoCKt6hZKWU3Q_p6yyhkZW4xKzP2b4_FzcWxARbzcOTxC4w/exec';
 
     function requestTranslation() {
       const text = document.getElementById('inputText').value.trim();
@@ -1428,7 +1535,7 @@
 
     async function callDirectGemini(payload, apiKey) {
       const systemInstruction = buildClientSystemInstruction(payload.grade);
-      const models = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
       const body = {
         contents: [{
           parts: [{ text: payload.text }]
@@ -1465,7 +1572,7 @@
 
           // 비동기로 'inEnglish' 구글 시트에 학생 검색 히스토리 누적 기록 (fire-and-forget)
           try {
-            const logUrl = `${GAS_WEBAPP_URL}?action=logHistory&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}&translation=${encodeURIComponent(parsed.translation || '')}&direction=${encodeURIComponent(parsed.direction || 'ko-to-en')}&model=${encodeURIComponent(model || 'gemini-3.8-flash')}`;
+            const logUrl = `${GAS_WEBAPP_URL}?action=logHistory&grade=${encodeURIComponent(payload.grade)}&text=${encodeURIComponent(payload.text)}&translation=${encodeURIComponent(parsed.translation || '')}&direction=${encodeURIComponent(parsed.direction || 'ko-to-en')}&model=${encodeURIComponent(model || 'gemini-2.5-flash')}`;
             fetch(logUrl, { mode: 'no-cors', keepalive: true }).catch(()=>{});
             const beacon = new Image();
             beacon.src = logUrl;
@@ -1840,6 +1947,8 @@
     window.closeApiKeyModal = closeApiKeyModal;
     window.saveApiKey = saveApiKey;
     window.requestTeacherSettings = requestTeacherSettings;
+    window.closePinModal = closePinModal;
+    window.submitTeacherPin = submitTeacherPin;
     window.saveTeacherPin = saveTeacherPin;
   </script>
 
