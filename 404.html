@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>inEnglish 페이지 이동 중</title>
+  <script>
+    // 대소문자(inenglish 등) 불일치로 404가 발생한 경우 정식 URL로 자동 리디렉션
+    var targetUrl = 'https://intelprint.github.io/inEnglish/';
+    if (window.location.href !== targetUrl) {
+      window.location.replace(targetUrl);
+    }
+  </script>
+</head>
+<body style="font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f8fafc; text-align: center;">
+  <div style="padding: 24px; background: white; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+    <h1 style="font-size: 20px; color: #1e293b; margin-bottom: 8px;">🎒 inEnglish 연결 중...</h1>
+    <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">잠시 후 앱으로 자동 연결됩니다.</p>
+    <a href="https://intelprint.github.io/inEnglish/" style="display: inline-block; padding: 10px 20px; background-color: #4f46e5; color: white; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px;">직접 이동하기 ↗</a>
+  </div>
+</body>
+</html>
