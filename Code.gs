@@ -1,9 +1,9 @@
 /** inEnglish GAS-only server. All secrets and Google API calls stay on the server. */
-var APP_VERSION = '3.0.1';
-var PROMPT_VERSION = '2026-10-27-v3.1';
+var APP_VERSION = '3.0.2';
+var PROMPT_VERSION = '2026-10-28-v3.2';
 var DEFAULT_HISTORY_SHEET_ID = '1zRyXVFaCxraQ4MxxmwX1JWJfAo9N802X2YBUruCw6OI';
 function doGet(e) {
-  if (e && e.parameter && e.parameter.action === 'health') return json_({success:true, version:APP_VERSION});
+  if (e && e.parameter && e.parameter.action === 'health') return json_({success:true, version:APP_VERSION, translationCacheEnabled:false, encoding:encodingHealth_()});
   return HtmlService.createHtmlOutputFromFile('index').setTitle('inEnglish · 초등 영어 교실').addMetaTag('viewport','width=device-width, initial-scale=1.0');
 }
 function doPost(e) {
@@ -17,7 +17,7 @@ function doPost(e) {
   } catch(err){return json_(failure_('요청을 처리하지 못했습니다. 다시 시도해주세요.'));}
 }
 function getAppBootstrap() {
-  try {return {success:true,version:APP_VERSION,token:issueToken_('student',28800),maxLength:500};}
+  try {requireUtf8_();return {success:true,version:APP_VERSION,token:issueToken_('student',28800),maxLength:500,translationCacheEnabled:false};}
   catch(err){return failure_('서버에 연결하지 못했습니다. 잠시 후 다시 시도해주세요.');}
 }
 // Fixed PIN is a convenience lock; no key readback or credential mutation is exposed.
@@ -39,7 +39,9 @@ function getTeacherStatus(p) {
 function translateElementary(p) {
   var reserved=false,reqKey='',finished=false,ownsRequest=false;
   try {
+    if(!p||p.protocolVersion!==2)return failure_('수정된 번역 화면이 필요합니다. 페이지를 새로고침한 뒤 다시 사용해주세요.');
     var session=requireToken_(p&&p.token,'student'),grade=Number(p.grade);
+    requireUtf8_();
     if([3,4,5,6].indexOf(grade)<0) return failure_('3~6학년 중에서 선택해주세요.');
     var text=String(p.text||'').normalize('NFC').trim();
     if(!text||text.length>500) return failure_('번역할 내용을 500자 이내로 입력해주세요.');
@@ -49,31 +51,30 @@ function translateElementary(p) {
     var cache=CacheService.getScriptCache(),props=PropertiesService.getScriptProperties();
     var apiKey=String(props.getProperty('GEMINI_API_KEY')||'').trim();
     if(!apiKey) return failure_('선생님의 서버 API 설정이 필요합니다. 선생님께 알려주세요.');
-    reqKey='request_v3_'+digest_(session.id+':'+requestId);
-    var fingerprint=digest_(grade+':'+text),cacheKey='translation_v3_'+digest_(PROMPT_VERSION+':'+grade+':'+text);
+    // Only exact retries of one request may reuse a response. Translation sharing is disabled.
+    // The v4 namespace never reads any response created by the defective v3 digest path.
+    reqKey='request_v4_'+digest_(session.id+':'+requestId);
+    var identity={schema:4,sessionId:session.id,requestId:requestId,grade:grade,text:text,promptVersion:PROMPT_VERSION};
     var previous=locked_(function(){
       var existing=cache.get(reqKey);
-      if(existing){var saved=JSON.parse(existing);if(saved.fingerprint!==fingerprint)return failure_('요청이 바뀌었습니다. 다시 번역해주세요.');
+      if(existing){var saved=JSON.parse(existing);if(!sameRequest_(saved,identity))return failure_('요청이 바뀌었습니다. 다시 번역해주세요.');
         return saved.response||failure_('이 문장을 번역 중입니다. 잠시 후 다시 시도해주세요.');}
       enforceRate_(session.id,cache);
-      cache.put(reqKey,JSON.stringify({fingerprint:fingerprint}),180);ownsRequest=true;return null;
+      cache.put(reqKey,JSON.stringify(identity),360);ownsRequest=true;return null;
     });
     if(previous)return previous;
-    var data,cached=cache.get(cacheKey);
-    if(cached){data=JSON.parse(cached);data.isCached=true;}
-    else {
-      locked_(function(){
-        var usage=dailyUsage_(props),active=Number(cache.get('active_v3')||0);
-        if(usage.count>=dailyLimit_(props))throw new Error('오늘의 번역 사용 한도에 도달했습니다. 선생님께 알려주세요.');
-        if(active>=20)throw new Error('여러 친구가 번역 중이에요. 잠시 후 다시 시도해주세요.');
-        props.setProperty('USAGE_V3',JSON.stringify({day:usage.day,count:usage.count+1}));
-        cache.put('active_v3',String(active+1),180);reserved=true;
-      });
-      data=generateTranslation_(apiKey,grade,text);data.isCached=false;
-      cache.put(cacheKey,JSON.stringify(data),21600);
-    }
-    var logged=logTranslation_(grade,text,data,requestId),response={success:true,data:data,recorded:logged,version:APP_VERSION};
-    cache.put(reqKey,JSON.stringify({fingerprint:fingerprint,response:response}),21600);finished=true;return response;
+    locked_(function(){
+      var usage=dailyUsage_(props),active=Number(cache.get('active_v3')||0);
+      if(usage.count>=dailyLimit_(props))throw new Error('오늘의 번역 사용 한도에 도달했습니다. 선생님께 알려주세요.');
+      if(active>=20)throw new Error('여러 친구가 번역 중이에요. 잠시 후 다시 시도해주세요.');
+      props.setProperty('USAGE_V3',JSON.stringify({day:usage.day,count:usage.count+1}));
+      cache.put('active_v3',String(active+1),180);reserved=true;
+    });
+    var data=generateTranslation_(apiKey,grade,text);data.isCached=false;
+    var logged=logTranslation_(grade,text,data,requestId),response={success:true,data:data,recorded:logged,version:APP_VERSION,
+      request:{requestId:requestId,grade:grade,text:text}};
+    identity.response=response;
+    cache.put(reqKey,JSON.stringify(identity),21600);finished=true;return response;
   }catch(err){
     console.warn('Translation failed');
     return failure_(err&&err.message||'번역하지 못했습니다. 다시 시도해주세요.');
@@ -172,7 +173,17 @@ function requireToken_(token,kind){
   if(parsed.kind!==kind||!parsed.id||parsed.exp<Date.now())throw new Error('인증이 만료되었습니다. 화면을 새로고침해주세요.');
   return parsed;
 }
-function digest_(text){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,text).map(function(b){return('0'+((b+256)%256).toString(16)).slice(-2);}).join('');}
+function sameRequest_(saved,current){return saved&&saved.schema===4&&saved.sessionId===current.sessionId&&saved.requestId===current.requestId&&
+  saved.grade===current.grade&&saved.text===current.text&&saved.promptVersion===current.promptVersion;}
+function digest_(text){
+  var bytes=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,String(text),Utilities.Charset.UTF_8),hex='';
+  for(var i=0;i<bytes.length;i++)hex+=('0'+((Number(bytes[i])+256)%256).toString(16)).slice(-2);
+  return hex;
+}
+function utf8Healthy_(){return digest_('닌텐도 게임')==='1408f36283289cae02ea220e15acc1bcdefe884a21712fc92de10ca74c35f67d'&&
+  digest_('매콤한 김밥')==='737eb35d61f807ac69923eed22164160cc1edc4962d69fec5ccc12ee167be1f7';}
+function requireUtf8_(){if(!utf8Healthy_())throw new Error('서버 문자 처리 검사에 실패했습니다. 선생님께 알려주세요.');}
+function encodingHealth_(){return {charset:'UTF-8',utf8SelfTest:utf8Healthy_()};}
 function locked_(fn){var lock=LockService.getScriptLock();if(!lock.tryLock(5000))throw new Error('서버가 잠시 바쁩니다. 다시 시도해주세요.');try{return fn();}finally{lock.releaseLock();}}
 function failure_(message){return{success:false,error:message};}
 function json_(value){return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);}

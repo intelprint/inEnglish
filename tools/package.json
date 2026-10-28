@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "tailwindcss": "3.4.17",
+    "jsdom": "26.1.0"
+  }
+}

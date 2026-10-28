@@ -1953,10 +1953,12 @@ function selectGrade(grade){
     chip.className='px-2 py-1 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-brand-700 text-[11px] border border-slate-200 btn-bounce';
     chip.addEventListener('click',function(){$('inputText').value=phrase;handleInputTextChange();requestTranslation();});container.appendChild(chip);
   });
-  if(state.result&&state.result.grade!==grade){show('resultSection',false);show('idlePlaceholder',true);}
+  if(state.result&&state.result.grade!==grade)invalidateResult();
 }
+function invalidateResult(){state.result=null;show('resultSection',false);show('idlePlaceholder',true);show('cacheBadge',false);text('recordingStatus','');stopAudio();}
 function handleInputTextChange(){
   var input=$('inputText'),value=input.value.trim();state.sequence++;if(state.busy)setLoading(false);
+  invalidateResult();
   show('clearBtn',!!value);$('clearBtn').classList.toggle('inline-flex',!!value);
   var ko=/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value),en=/[a-zA-Z]/.test(value);
   text('langIndicatorText',!value?'한글 또는 영어를 입력해주세요':ko&&en?'🔄 한·영 혼합 스마트 완성 모드':ko?'🇰🇷 한글 → 🇺🇸 영어 번역 모드':en?'🇺🇸 영어 → 🇰🇷 한글 번역 모드':'한글 또는 영어로 입력해주세요');
@@ -1968,15 +1970,19 @@ function clearInput(){
 function handleKeyDown(e){if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();requestTranslation();}}
 async function requestTranslation(){
   if(state.busy)return;
-  var value=$('inputText').value.trim();if(!value){showError('번역할 내용을 입력하거나 마이크로 말씀해주세요! 😊');return;}
+  var value=$('inputText').value.normalize('NFC').trim();if(!value){showError('번역할 내용을 입력하거나 마이크로 말씀해주세요! 😊');return;}
   if(value.length>500){showError('500자 이내로 입력해주세요.');return;}
   if(/[^A-Za-z\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A30-9\s.,?!'"“”‘’():;\-–—…/%&+*=~@#$\[\]{}]/.test(value)){showError('한글 또는 영어로 입력해주세요.');return;}
-  hideError();setLoading(true);var sequence=++state.sequence,grade=state.grade;
+  hideError();invalidateResult();setLoading(true);var sequence=++state.sequence,grade=state.grade,requestId=uid();
   try{
     var token=await ensureSession();if(sequence!==state.sequence)return;
-    var response=await rpc('translateElementary',{token:token,requestId:uid(),text:value,grade:grade},55000);
+    var response=await rpc('translateElementary',{protocolVersion:2,token:token,requestId:requestId,text:value,grade:grade},55000);
     if(sequence!==state.sequence)return;
     if(!response||!response.success){if(response&&/인증|새로고침/.test(response.error))state.token='';throw new Error(response&&response.error||'번역 결과를 받지 못했습니다.');}
+    if(!response.request||response.request.requestId!==requestId||response.request.grade!==grade||response.request.text!==value||
+      !response.data||response.data.grade!==grade||state.grade!==grade||$('inputText').value.normalize('NFC').trim()!==value){
+      invalidateResult();throw new Error('입력과 일치하지 않는 응답을 차단했습니다. 다시 번역해주세요.');
+    }
     renderResult(response.data);text('recordingStatus',response.recorded?'검색 기록 저장됨':'번역 완료 · 검색 기록 저장 지연');
   }catch(e){if(sequence===state.sequence)showError(e.message||'다시 시도해주세요.');}
   finally{if(sequence===state.sequence)setLoading(false);}
@@ -1986,7 +1992,7 @@ function renderResult(data){
   state.result=data;show('idlePlaceholder',false);show('resultSection',true);
   text('resultGradeBadge',data.grade+'학년 '+(data.direction==='mixed-to-en'?'스마트 완성 ✨':'맞춤 표현 ✨'));
   text('resultText',data.translation);text('ipaSymbolText',data.pronunciation||'');
-  show('pronunciationGuide',!!data.pronunciation&&data.direction!=='en-to-ko');show('cacheBadge',!!data.isCached);
+  show('pronunciationGuide',!!data.pronunciation&&data.direction!=='en-to-ko');show('cacheBadge',false);
   text('tipText',data.tip||'');show('tipBox',!!data.tip);
   var list=$('keyWordsList');list.replaceChildren();
   data.keyWords.slice(0,4).forEach(function(item){
@@ -2127,4 +2133,5 @@ function init(){
 }
 window.addEventListener('error',function(){showError('화면 처리 중 문제가 생겼습니다. 새로고침 후 다시 시도해주세요.');setLoading(false);});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-})();</script></body></html>
+})();
+</script></body></html>
