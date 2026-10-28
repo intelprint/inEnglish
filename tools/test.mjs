@@ -29,10 +29,12 @@ const server=vm.createContext({
 vm.runInContext(prompt,server);vm.runInContext(code,server);
 const generateWithModel=server.generateTranslation_;
 server.generateTranslation_=(_,grade,value)=>{calls++;return{translation:'Hello!',grade,resultType:'translation',direction:'ko-to-en',tip:'인사해요.',pronunciation:'/həˈloʊ/',keyWords:[{word:'hello',meaning:'안녕'}],usedModel:'test-model'};};
-const translate=p=>server.translateElementary({protocolVersion:2,...p});
+const translate=p=>server.translateElementary({protocolVersion:3,...p});
 function check(name,fn){fn();results.push({name,passed:true});}
 const bootstrap=server.getAppBootstrap();
-check('older clients must reload instead of using unbound results',()=>assert.equal(server.translateElementary({token:bootstrap.token,text:'hello',grade:3,requestId:crypto.randomUUID()}).success,false));
+check('old clients including the paste-enabled protocol must reload',()=>{
+  for(const protocolVersion of [undefined,2])assert.equal(server.translateElementary({protocolVersion,token:bootstrap.token,text:'hello',grade:3,requestId:crypto.randomUUID()}).success,false);
+});
 check('signed bootstrap session',()=>{assert.equal(bootstrap.success,true);assert.ok(bootstrap.token);assert.ok(!JSON.stringify(bootstrap).includes('synthetic-test-key'));});
 check('invalid or tampered session blocked',()=>{assert.equal(translate({token:bootstrap.token+'x',text:'hello',grade:3,requestId:crypto.randomUUID()}).success,false);});
 check('Korean and Latin spellings accepted without allowing unrelated scripts',()=>{
@@ -112,7 +114,7 @@ check('history identifies Korean spelling separately from meaning translation',(
 const session=server.getAppBootstrap();let limited=false;
 for(let i=0;i<16;i++){const r=translate({token:session.token,text:'같은 표현',grade:4,requestId:crypto.randomUUID()});if(!r.success&&r.error.includes('빠르게'))limited=true;}
 check('per-session rate limit enforced',()=>assert.equal(limited,true));
-const errors=[],requests=[],audioUrls=[],copiedTexts=[];let mode='success',pendingSuccess=null;const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
+const errors=[],requests=[],audioUrls=[],copiedTexts=[],popupWindows=[];let popupRecognition=null;let mode='success',pendingSuccess=null;const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
 const dom=new JSDOM(html,{url:'https://test.googleusercontent.com/userCodeAppPanel',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole,
   beforeParse(window){
     const realTimer=window.setTimeout.bind(window);
@@ -122,6 +124,14 @@ const dom=new JSDOM(html,{url:'https://test.googleusercontent.com/userCodeAppPan
     window.speechSynthesis={cancel(){},getVoices:()=>[],speak(){}};
     window.SpeechSynthesisUtterance=function(t){this.text=t;};
     window.document.execCommand=()=>true;
+    window.open=()=>{
+      const child=new JSDOM('',{url:'https://test.googleusercontent.com/voice-popup',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole,
+        beforeParse(popup){
+          Object.defineProperty(popup,'opener',{value:window});
+          popup.SpeechRecognition=function(){popupRecognition=this;this.start=()=>this.onstart&&this.onstart();this.abort=()=>{};};
+        }});
+      popupWindows.push(child);return child.window;
+    };
     Object.defineProperty(window.navigator,'clipboard',{value:{writeText:async value=>copiedTexts.push(value)}});
     window.google={script:{run:{
       withSuccessHandler(success){
@@ -144,6 +154,29 @@ const doc=dom.window.document,w=dom.window;
 const tick=()=>new Promise(resolve=>setTimeout(resolve,10));
 check('no external scripts or inline event handlers',()=>{assert.equal(doc.querySelectorAll('script[src]').length,0);assert.equal(doc.querySelectorAll('[onclick],[onload],[oninput],[onkeydown]').length,0);});
 check('all startup modals natively hidden',()=>{for(const id of ['teacherPinModal','voiceModal','apiKeyModal'])assert.equal(doc.getElementById(id).hidden,true);assert.ok(doc.getElementById('app-css').textContent.includes('[hidden]'));});
+function tryPastedInsertion(win,input,type){
+  const before=input.value;
+  const e=type.startsWith('insertFrom')?new win.InputEvent('beforeinput',{inputType:type,data:'다른 곳에서 가져온 긴 글',bubbles:true,cancelable:true}):new win.Event(type,{bubbles:true,cancelable:true});
+  input.dispatchEvent(e);
+  if(!e.defaultPrevented)input.value+='다른 곳에서 가져온 긴 글';
+  assert.equal(e.defaultPrevented,true,type);assert.equal(input.value,before,type);
+}
+const pastedInputTypes=['paste','drop','insertFromPaste','insertFromPasteAsQuotation','insertFromDrop','insertFromYank'];
+for(const [inputId,messageId] of [['inputText','errorMessage'],['modalVoiceInput','modalStatusMsg']]){
+  check('clipboard and drop insertion blocked without an API call in '+inputId,()=>{
+    const input=doc.getElementById(inputId),before=requests.length;input.value='직접 쓴 글';
+    for(const type of pastedInputTypes)tryPastedInsertion(w,input,type);
+    assert.ok(doc.getElementById(messageId).textContent.includes('붙여넣기'));assert.equal(requests.length,before);
+  });
+}
+check('typing, Korean IME and editing remain allowed in student inputs',()=>{
+  for(const id of ['inputText','modalVoiceInput'])for(const inputType of ['insertText','insertCompositionText','deleteContentBackward']){
+    const e=new w.InputEvent('beforeinput',{inputType,data:'한',bubbles:true,cancelable:true});doc.getElementById(id).dispatchEvent(e);assert.equal(e.defaultPrevented,false,inputType);
+  }
+});
+check('teacher PIN clipboard behavior is unaffected',()=>{
+  const e=new w.Event('paste',{bubbles:true,cancelable:true});doc.getElementById('pinCodeInput').dispatchEvent(e);assert.equal(e.defaultPrevented,false);
+});
 doc.getElementById('gradeBtn-5').click();
 check('grade button and dropdown stay synchronized',()=>assert.equal(doc.getElementById('gradeSelectDropdown').value,'5'));
 await new Promise(resolve=>setTimeout(resolve,250));
@@ -192,6 +225,17 @@ doc.getElementById('settingsBtn').click();doc.getElementById('pinCodeInput').val
 check('fixed PIN opens safe teacher settings',()=>{assert.equal(doc.getElementById('apiKeyModal').hidden,false);assert.equal(doc.querySelectorAll('#apiKeyInput,#teacherPinInput').length,0);});
 doc.querySelector('[data-action=closeApiKeyModal]').click();doc.getElementById('micBtn').click();
 check('voice modal opens when recognition is unavailable',()=>{assert.equal(doc.getElementById('voiceModal').hidden,false);assert.ok(doc.getElementById('modalStatusMsg').textContent.includes('지원'));});
+doc.querySelector('[data-action=openVoicePopup]').click();
+const popupDom=popupWindows.at(-1),popup=popupDom.window,popupDoc=popup.document;
+check('standalone voice popup also blocks paste and drop',()=>{
+  const input=popupDoc.getElementById('voiceText');input.value='직접 입력';
+  for(const type of pastedInputTypes)tryPastedInsertion(popup,input,type);
+  assert.ok(popupDoc.getElementById('status').textContent.includes('붙여넣기'));
+});
+check('speech recognition still writes into the standalone voice input',()=>{
+  popupRecognition.onresult({results:[[{transcript:'hello'}]]});assert.equal(popupDoc.getElementById('voiceText').value,'hello');
+});
+popupDom.window.close();
 doc.querySelector('[data-action=closeVoiceModal]').click();
 check('voice modal closes independently of speech support',()=>assert.equal(doc.getElementById('voiceModal').hidden,true));
 mode='pending';doc.getElementById('translateBtn').click();await new Promise(resolve=>setTimeout(resolve,80));
@@ -200,7 +244,7 @@ pendingSuccess({success:true,data:{translation:'AFTER TIMEOUT',grade:5,direction
 check('response after timeout is ignored',()=>assert.notEqual(doc.getElementById('resultText').textContent,'AFTER TIMEOUT'));
 check('no uncaught DOM or JavaScript errors',()=>assert.deepEqual(errors,[]));
 dom.window.close();
-await fs.mkdir(path.join(root,'audit/2026-10-28-transliteration'),{recursive:true});
-await fs.writeFile(path.join(root,'audit/2026-10-28-transliteration/test-results.json'),JSON.stringify(results,null,2));
+await fs.mkdir(path.join(root,'audit/2026-10-28-block-paste'),{recursive:true});
+await fs.writeFile(path.join(root,'audit/2026-10-28-block-paste/test-results.json'),JSON.stringify(results,null,2));
 console.log(JSON.stringify({passed:results.length}));
 

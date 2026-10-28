@@ -1,5 +1,5 @@
 /** inEnglish GAS-only server. All secrets and Google API calls stay on the server. */
-var APP_VERSION = '3.0.3';
+var APP_VERSION = '3.0.4';
 var PROMPT_VERSION = '2026-10-28-v3.3';
 var DEFAULT_HISTORY_SHEET_ID = '1zRyXVFaCxraQ4MxxmwX1JWJfAo9N802X2YBUruCw6OI';
 function doGet(e) {
@@ -39,7 +39,7 @@ function getTeacherStatus(p) {
 function translateElementary(p) {
   var reserved=false,reqKey='',finished=false,ownsRequest=false;
   try {
-    if(!p||p.protocolVersion!==2)return failure_('수정된 번역 화면이 필요합니다. 페이지를 새로고침한 뒤 다시 사용해주세요.');
+    if(!p||p.protocolVersion!==3)return failure_('수정된 번역 화면이 필요합니다. 페이지를 새로고침한 뒤 다시 사용해주세요.');
     var session=requireToken_(p&&p.token,'student'),grade=Number(p.grade);
     requireUtf8_();
     if([3,4,5,6].indexOf(grade)<0) return failure_('3~6학년 중에서 선택해주세요.');

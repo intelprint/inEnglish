@@ -69,6 +69,17 @@ function handleInputTextChange(){
 function clearInput(){
   state.sequence++;$('inputText').value='';handleInputTextChange();hideError();show('resultSection',false);show('idlePlaceholder',true);state.result=null;stopAudio();$('inputText').focus();
 }
+function blockPastedInput(input,onBlocked){
+  function block(e){
+    e.preventDefault();
+    onBlocked('붙여넣기는 사용할 수 없어요. 직접 입력하거나 마이크로 말해주세요.');
+  }
+  input.addEventListener('paste',block);
+  input.addEventListener('drop',block);
+  input.addEventListener('beforeinput',function(e){
+    if(/^insertFrom(?:Paste|Drop|Yank)/.test(e.inputType||''))block(e);
+  });
+}
 function handleKeyDown(e){if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();requestTranslation();}}
 async function requestTranslation(){
   if(state.busy)return;
@@ -78,7 +89,7 @@ async function requestTranslation(){
   hideError();invalidateResult();setLoading(true);var sequence=++state.sequence,grade=state.grade,requestId=uid();
   try{
     var token=await ensureSession();if(sequence!==state.sequence)return;
-    var response=await rpc('translateElementary',{protocolVersion:2,token:token,requestId:requestId,text:value,grade:grade},55000);
+    var response=await rpc('translateElementary',{protocolVersion:3,token:token,requestId:requestId,text:value,grade:grade},55000);
     if(sequence!==state.sequence)return;
     if(!response||!response.success){if(response&&/인증|새로고침/.test(response.error))state.token='';throw new Error(response&&response.error||'번역 결과를 받지 못했습니다.');}
     if(!response.request||response.request.requestId!==requestId||response.request.grade!==grade||response.request.text!==value||
@@ -183,9 +194,10 @@ function toggleModalListening(){if(state.listening)stopModalListening();else sta
 function restartModalListening(){$('modalVoiceInput').value='';startModalListening();}
 function clearModalVoiceInput(){$('modalVoiceInput').value='';$('modalVoiceInput').focus();}
 function submitModalVoiceResult(){var value=$('modalVoiceInput').value.trim();if(!value){text('modalStatusMsg','말하거나 글자를 입력해주세요.');return;}closeVoiceModal();$('inputText').value=value.slice(0,500);handleInputTextChange();requestTranslation();}
-function voicePopupApp(config){
+function voicePopupApp(config,blockPastedInput){
   var doc=document,rec=null,listening=false,lang=config.lang;
   function status(value){doc.getElementById('status').textContent=value;}
+  blockPastedInput(doc.getElementById('voiceText'),status);
   function stop(){if(rec){try{rec.abort();}catch(ignore){}}listening=false;}
   function start(){
     var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -210,7 +222,7 @@ function openVoicePopup(){
   if(!popup){text('modalStatusMsg','팝업이 차단되었습니다. 팝업을 허용하거나 직접 입력해주세요.');return;}state.popup=popup;
   var markup='<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>inEnglish 음성 입력</title><style>body{margin:0;padding:24px;font:15px system-ui,sans-serif;background:#f8fafc;color:#1e293b}h1{font-size:20px}button{border:0;border-radius:12px;padding:12px;margin:3px;background:#e0e7ff;color:#3730a3;font-weight:bold;cursor:pointer}textarea{box-sizing:border-box;width:100%;height:145px;margin:15px 0;padding:14px;border:2px solid #c7d2fe;border-radius:16px;font:18px system-ui,sans-serif}#mic{font-size:30px;background:#ffe4e6}#done{background:#4f46e5;color:white}#status{min-height:42px;line-height:1.5}</style></head><body><h1>🎙️ inEnglish 음성 입력</h1><div><button id="ko">한국어</button><button id="en">영어</button></div><p id="status">마이크에 연결하고 있어요.</p><button id="mic">🎙️</button><textarea id="voiceText" maxlength="500" placeholder="인식된 내용을 직접 고칠 수 있어요."></textarea><div><button id="clear">지우기</button><button id="restart">다시 말하기</button></div><p><button id="cancel">취소</button><button id="done">완료 및 번역</button></p></body></html>';
   popup.document.open();popup.document.write(markup);popup.document.close();
-  var script=popup.document.createElement('script');script.textContent='('+voicePopupApp.toString()+')('+JSON.stringify({lang:state.lang,origin:window.location.origin,channel:state.channel})+');';popup.document.body.appendChild(script);
+  var script=popup.document.createElement('script');script.textContent='('+voicePopupApp.toString()+')('+JSON.stringify({lang:state.lang,origin:window.location.origin,channel:state.channel})+','+blockPastedInput.toString()+');';popup.document.body.appendChild(script);
 }
 var actions={selectGrade:selectGrade,toggleBoardMode:toggleBoardMode,requestTeacherSettings:requestTeacherSettings,closePinModal:closePinModal,submitTeacherPin:submitTeacherPin,
   requestTranslation:requestTranslation,clearInput:clearInput,toggleSpeechRecognition:toggleSpeechRecognition,setSpeechLanguage:setSpeechLanguage,
@@ -221,6 +233,8 @@ function init(){
   if(document.body.dataset.initialized)return;document.body.dataset.initialized='true';
   try{localStorage.removeItem('IN_ENGLISH_API_KEY');localStorage.removeItem('IN_ENGLISH_TEACHER_PIN');}catch(ignore){}
   document.addEventListener('click',function(e){var button=e.target.closest('[data-action]');if(!button||button.disabled)return;var fn=actions[button.dataset.action];if(fn){e.preventDefault();fn(button.dataset.grade||button.dataset.lang);}});
+  blockPastedInput($('inputText'),showError);
+  blockPastedInput($('modalVoiceInput'),function(message){text('modalStatusMsg',message);});
   $('inputText').addEventListener('input',handleInputTextChange);$('inputText').addEventListener('keydown',handleKeyDown);
   $('gradeSelectDropdown').addEventListener('change',function(e){selectGrade(e.target.value);});
   $('teacherPinForm').addEventListener('submit',function(e){e.preventDefault();submitTeacherPin();});
