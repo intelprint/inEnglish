@@ -27,14 +27,18 @@ const server=vm.createContext({
   ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({text:s,setMimeType(){return this;}})}
 });
 vm.runInContext(prompt,server);vm.runInContext(code,server);
-server.generateTranslation_=(_,grade,value)=>{calls++;return{translation:'Hello!',grade,direction:'ko-to-en',tip:'인사해요.',pronunciation:'/həˈloʊ/',keyWords:[{word:'hello',meaning:'안녕'}],usedModel:'test-model'};};
+const generateWithModel=server.generateTranslation_;
+server.generateTranslation_=(_,grade,value)=>{calls++;return{translation:'Hello!',grade,resultType:'translation',direction:'ko-to-en',tip:'인사해요.',pronunciation:'/həˈloʊ/',keyWords:[{word:'hello',meaning:'안녕'}],usedModel:'test-model'};};
 const translate=p=>server.translateElementary({protocolVersion:2,...p});
 function check(name,fn){fn();results.push({name,passed:true});}
 const bootstrap=server.getAppBootstrap();
 check('older clients must reload instead of using unbound results',()=>assert.equal(server.translateElementary({token:bootstrap.token,text:'hello',grade:3,requestId:crypto.randomUUID()}).success,false));
 check('signed bootstrap session',()=>{assert.equal(bootstrap.success,true);assert.ok(bootstrap.token);assert.ok(!JSON.stringify(bootstrap).includes('synthetic-test-key'));});
 check('invalid or tampered session blocked',()=>{assert.equal(translate({token:bootstrap.token+'x',text:'hello',grade:3,requestId:crypto.randomUUID()}).success,false);});
-check('only Korean and English scripts accepted',()=>{assert.equal(server.validateLanguage_('한글 and English?'),true);for(const s of ['สวัสดี','नमस्ते','γειά','こんにちは'])assert.equal(server.validateLanguage_(s),false);});
+check('Korean and Latin spellings accepted without allowing unrelated scripts',()=>{
+  for(const s of ['한글 and English?','hotate maki','Shinjuku','Bottega Veneta','Hermès','São Paulo','cafe\u0301'])assert.equal(server.validateLanguage_(s),true,s);
+  for(const s of ['สวัสดี','नमस्ते','γειά','こんにちは','hello こんにちは','\u0301hello','123!?'])assert.equal(server.validateLanguage_(s),false,s);
+});
 check('500-character server maximum enforced',()=>assert.equal(translate({token:bootstrap.token,text:'a'.repeat(501),grade:3,requestId:crypto.randomUUID()}).success,false));
 const req={token:bootstrap.token,text:'안녕',grade:3,requestId:crypto.randomUUID()};
 check('translation and single history row',()=>{const r=translate(req);assert.equal(r.success,true);assert.equal(rows.length,1);assert.equal(r.recorded,true);});
@@ -74,20 +78,51 @@ check('raw request identity protects against even an artificial digest collision
 });
 check('formula-like history text neutralized',()=>{for(const s of ['=1+1',' +SUM(A1:A2)','@test'])assert.ok(server.sheetText_(s).startsWith("'"));});
 check('teacher PIN fixed and API key never returned',()=>{assert.equal(server.getTeacherStatus({token:bootstrap.token,pin:'0000'}).success,false);const r=server.getTeacherStatus({token:bootstrap.token,pin:'0106'});assert.equal(r.success,true);assert.ok(!JSON.stringify(r).includes('synthetic-test-key'));});
-check('HTML or malformed model output blocked',()=>{assert.throws(()=>server.normalizeResult_({direction:'ko-to-en',translation:'<img src=x>',keyWords:[]},3,'test'));assert.throws(()=>server.normalizeResult_({direction:'bad',translation:'hi',keyWords:[]},3,'test'));});
+check('HTML or malformed model output blocked',()=>{assert.throws(()=>server.normalizeResult_({direction:'ko-to-en',resultType:'translation',translation:'<img src=x>',keyWords:[]},3,'test'));assert.throws(()=>server.normalizeResult_({direction:'bad',translation:'hi',keyWords:[]},3,'test'));});
+const transliterationNote='뜻을 번역한 것이 아니라 소리를 한글로 옮긴 한국어 표기예요. 원어·지역에 따라 읽는 법이 다를 수 있어요.';
+const transliterationSample={direction:'en-to-ko',resultType:'transliteration',translation:'호타테 마키',pronunciation:'/incorrect/',tip:'지어낸 재료 설명',keyWords:[{word:'hotate',meaning:'확인되지 않은 뜻'}]};
+check('transliteration returns Korean spelling with a fixed non-translation notice',()=>{
+  const r=server.normalizeResult_(transliterationSample,5,'test');
+  assert.equal(r.translation,'호타테 마키');assert.equal(r.resultType,'transliteration');assert.equal(r.curriculumLevel,'한국어 표기');
+  assert.equal(r.direction,'en-to-ko');assert.equal(r.tip,transliterationNote);assert.equal(r.pronunciation,'');assert.equal(r.keyWords.length,0);
+});
+check('nonfood transliterations use the same normalization',()=>{
+  for(const name of ['신주쿠','보테가 베네타','루트비히 판 베토벤'])assert.equal(server.normalizeResult_({...transliterationSample,translation:name},6,'test').translation,name);
+});
+check('malformed transliteration cannot become English or injected markup',()=>{
+  for(const changed of [{translation:'<img src=x>'},{translation:'hotate maki'},{translation:'호타테 maki'},{direction:'ko-to-en'},{resultType:'unknown'}])assert.throws(()=>server.normalizeResult_({...transliterationSample,...changed},5,'test'));
+});
+check('ordinary meaning translations retain tips, vocabulary and English IPA',()=>{
+  const r=server.normalizeResult_({direction:'ko-to-en',resultType:'translation',translation:'Spicy gimbap',pronunciation:'/test/',tip:'매운 김밥이에요.',keyWords:[{word:'spicy',meaning:'매운'}]},5,'test');
+  assert.equal(r.resultType,'translation');assert.equal(r.pronunciation,'/test/');assert.equal(r.tip,'매운 김밥이에요.');assert.equal(r.keyWords[0].meaning,'매운');
+  assert.equal(server.normalizeResult_({direction:'en-to-ko',resultType:'translation',translation:'나는 축구를 좋아해요.',keyWords:[]},3,'test').translation,'나는 축구를 좋아해요.');
+});
+check('Gemini schema and full prompt agree on general transliteration support',()=>{
+  let captured;
+  server.UrlFetchApp={fetch:(url,options)=>{captured=JSON.parse(options.payload);return {getResponseCode:()=>200,getContentText:()=>JSON.stringify({candidates:[{content:{parts:[{text:JSON.stringify(transliterationSample)}]}}]})};}};
+  const r=generateWithModel('synthetic-test-key',5,'hotate maki');
+  assert.equal(r.resultType,'transliteration');assert.ok(captured.generationConfig.responseSchema.required.includes('resultType'));
+  assert.ok(captured.systemInstruction.parts[0].text.includes('사람·장소·상품·작품'));
+  assert.ok(!captured.systemInstruction.parts[0].text.includes('제3외국어는 거부'));
+});
+check('history identifies Korean spelling separately from meaning translation',()=>{
+  const r=server.normalizeResult_(transliterationSample,5,'test');
+  assert.equal(server.logTranslation_(5,'hotate maki',r,crypto.randomUUID()),true);assert.equal(rows.at(-1)[4],'한국어 표기');
+});
 const session=server.getAppBootstrap();let limited=false;
 for(let i=0;i<16;i++){const r=translate({token:session.token,text:'같은 표현',grade:4,requestId:crypto.randomUUID()});if(!r.success&&r.error.includes('빠르게'))limited=true;}
 check('per-session rate limit enforced',()=>assert.equal(limited,true));
-const errors=[],requests=[];let mode='success',pendingSuccess=null;const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
+const errors=[],requests=[],audioUrls=[],copiedTexts=[];let mode='success',pendingSuccess=null;const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
 const dom=new JSDOM(html,{url:'https://test.googleusercontent.com/userCodeAppPanel',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole,
   beforeParse(window){
     const realTimer=window.setTimeout.bind(window);
     window.setTimeout=(fn,ms,...args)=>realTimer(fn,ms===55000?50:ms,...args);
     window.HTMLElement.prototype.scrollIntoView=function(){};
-    window.Audio=function(){this.pause=function(){};this.play=function(){return Promise.resolve();};};
+    window.Audio=function(url){audioUrls.push(url);this.pause=function(){};this.play=function(){return Promise.resolve();};};
     window.speechSynthesis={cancel(){},getVoices:()=>[],speak(){}};
     window.SpeechSynthesisUtterance=function(t){this.text=t;};
     window.document.execCommand=()=>true;
+    Object.defineProperty(window.navigator,'clipboard',{value:{writeText:async value=>copiedTexts.push(value)}});
     window.google={script:{run:{
       withSuccessHandler(success){
         const runner={withFailureHandler(failure){runner.failure=failure;return runner;},
@@ -95,10 +130,11 @@ const dom=new JSDOM(html,{url:'https://test.googleusercontent.com/userCodeAppPan
           getTeacherStatus(p){queueMicrotask(()=>success(p.pin==='0106'?{success:true,keyConfigured:true,dailyUsed:0,dailyLimit:2500,model:'test',version:'test',sheetUrl:'https://docs.google.com/spreadsheets/d/test',projectUrl:'https://script.google.com/home/projects/test/settings'}:{success:false,error:'비밀번호가 일치하지 않습니다.'}));},
           translateElementary(p){requests.push(p);if(mode==='pending'){pendingSuccess=success;return;}
             const binding={requestId:p.requestId,grade:p.grade,text:p.text};
+            const transliterated=mode==='transliteration',spelling=p.text==='hotate maki'?'호타테 마키':p.text==='Shinjuku'?'신주쿠':'에르메스';
             if(mode==='wrong-text')binding.text='닌텐도 게임';
             if(mode==='wrong-grade')binding.grade=6;
             if(mode==='wrong-id')binding.requestId='other-request-id';
-            queueMicrotask(()=>success(mode==='error'?{success:false,error:'시험용 서버 오류'}:{success:true,recorded:true,request:binding,data:{translation:p.text==='hello'?'안녕하세요!':'Hello!',grade:p.grade,direction:p.text==='hello'?'en-to-ko':'ko-to-en',pronunciation:'/həˈloʊ/',tip:'안내',keyWords:[{word:'<img data-test-marker>',meaning:'단어'}]}}));}
+            queueMicrotask(()=>success(mode==='error'?{success:false,error:'시험용 서버 오류'}:{success:true,recorded:true,request:binding,data:{resultType:transliterated?'transliteration':'translation',translation:transliterated?spelling:p.text==='hello'?'안녕하세요!':'Hello!',grade:p.grade,direction:transliterated||p.text==='hello'?'en-to-ko':'ko-to-en',pronunciation:transliterated?'':'/həˈloʊ/',tip:transliterated?transliterationNote:'안내',keyWords:transliterated?[]:[{word:'<img data-test-marker>',meaning:'단어'}]}}));}
         };return runner;
       }
     }}};
@@ -123,7 +159,26 @@ for(const mismatched of ['wrong-text','wrong-grade','wrong-id']){
   mode=mismatched;doc.getElementById('translateBtn').click();await tick();
   check('reject response with '+mismatched,()=>{assert.equal(doc.getElementById('resultSection').hidden,true);assert.ok(doc.getElementById('errorMessage').textContent.includes('일치'));});
 }
-mode='success';
+mode='transliteration';
+for(const [value,expected] of [['hotate maki','호타테 마키'],['Shinjuku','신주쿠'],['Hermès','에르메스']]){
+  const before=requests.length;
+  doc.getElementById('inputText').value=value;doc.getElementById('inputText').dispatchEvent(new w.Event('input',{bubbles:true}));doc.getElementById('translateBtn').click();await tick();
+  check('Korean spelling result labeled for '+value,()=>{
+    assert.equal(requests.length,before+1);assert.equal(doc.getElementById('resultText').textContent,expected);assert.equal(doc.getElementById('resultGradeBadge').textContent,'한국어 표기');
+    assert.equal(doc.getElementById('tipText').textContent,transliterationNote);assert.equal(doc.getElementById('pronunciationGuide').hidden,true);assert.equal(doc.getElementById('keyWordsContainer').hidden,true);
+  });
+}
+doc.querySelector('[data-action=speakResult]').click();doc.querySelector('[data-action=copyResult]').click();await tick();
+check('Korean spelling audio and copying use the Korean answer',()=>{
+  assert.equal(new URL(audioUrls.at(-1)).searchParams.get('tl'),'ko');assert.equal(new URL(audioUrls.at(-1)).searchParams.get('q'),'에르메스');assert.equal(copiedTexts.at(-1),'에르메스');
+});
+const beforeUnsupported=requests.length;
+doc.getElementById('inputText').value='こんにちは';doc.getElementById('inputText').dispatchEvent(new w.Event('input',{bubbles:true}));doc.getElementById('translateBtn').click();await tick();
+check('client still rejects non-Latin third-language scripts before sending',()=>assert.equal(requests.length,beforeUnsupported));
+mode='success';doc.getElementById('inputText').value='안녕';doc.getElementById('inputText').dispatchEvent(new w.Event('input',{bubbles:true}));doc.getElementById('translateBtn').click();await tick();
+check('ordinary English translation restores grade badge, IPA and vocabulary',()=>{
+  assert.equal(doc.getElementById('resultText').textContent,'Hello!');assert.equal(doc.getElementById('resultGradeBadge').textContent,'5학년 맞춤 표현 ✨');assert.equal(doc.getElementById('pronunciationGuide').hidden,false);assert.equal(doc.getElementById('keyWordsContainer').hidden,false);
+});
 const requestsBeforeIme=requests.length;
 doc.getElementById('inputText').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Enter',isComposing:true,bubbles:true}));
 check('IME composition Enter does not translate',()=>assert.equal(requests.length,requestsBeforeIme));
@@ -145,7 +200,7 @@ pendingSuccess({success:true,data:{translation:'AFTER TIMEOUT',grade:5,direction
 check('response after timeout is ignored',()=>assert.notEqual(doc.getElementById('resultText').textContent,'AFTER TIMEOUT'));
 check('no uncaught DOM or JavaScript errors',()=>assert.deepEqual(errors,[]));
 dom.window.close();
-await fs.mkdir(path.join(root,'audit/2026-10-28-cache-fix'),{recursive:true});
-await fs.writeFile(path.join(root,'audit/2026-10-28-cache-fix/test-results.json'),JSON.stringify(results,null,2));
+await fs.mkdir(path.join(root,'audit/2026-10-28-transliteration'),{recursive:true});
+await fs.writeFile(path.join(root,'audit/2026-10-28-transliteration/test-results.json'),JSON.stringify(results,null,2));
 console.log(JSON.stringify({passed:results.length}));
 

@@ -1956,11 +1956,16 @@ function selectGrade(grade){
   if(state.result&&state.result.grade!==grade)invalidateResult();
 }
 function invalidateResult(){state.result=null;show('resultSection',false);show('idlePlaceholder',true);show('cacheBadge',false);text('recordingStatus','');stopAudio();}
+function validateInputLanguage(value){
+  var rest=value.replace(/\p{Script=Latin}\p{M}*/gu,'');
+  return /[\p{Script=Latin}\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3]/u.test(value)&&
+    !/[^\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A30-9\s.,?!'"“”‘’():;\-–—…/%&+*=~@#$\[\]{}]/.test(rest);
+}
 function handleInputTextChange(){
   var input=$('inputText'),value=input.value.trim();state.sequence++;if(state.busy)setLoading(false);
   invalidateResult();
   show('clearBtn',!!value);$('clearBtn').classList.toggle('inline-flex',!!value);
-  var ko=/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value),en=/[a-zA-Z]/.test(value);
+  var ko=/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value),en=/\p{Script=Latin}/u.test(value);
   text('langIndicatorText',!value?'한글 또는 영어를 입력해주세요':ko&&en?'🔄 한·영 혼합 스마트 완성 모드':ko?'🇰🇷 한글 → 🇺🇸 영어 번역 모드':en?'🇺🇸 영어 → 🇰🇷 한글 번역 모드':'한글 또는 영어로 입력해주세요');
   text('characterCount',input.value.length+' / 500');
 }
@@ -1972,7 +1977,7 @@ async function requestTranslation(){
   if(state.busy)return;
   var value=$('inputText').value.normalize('NFC').trim();if(!value){showError('번역할 내용을 입력하거나 마이크로 말씀해주세요! 😊');return;}
   if(value.length>500){showError('500자 이내로 입력해주세요.');return;}
-  if(/[^A-Za-z\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A30-9\s.,?!'"“”‘’():;\-–—…/%&+*=~@#$\[\]{}]/.test(value)){showError('한글 또는 영어로 입력해주세요.');return;}
+  if(!validateInputLanguage(value)){showError('한글·영어 또는 로마자로 쓴 이름·표현을 입력해주세요.');return;}
   hideError();invalidateResult();setLoading(true);var sequence=++state.sequence,grade=state.grade,requestId=uid();
   try{
     var token=await ensureSession();if(sequence!==state.sequence)return;
@@ -1990,7 +1995,7 @@ async function requestTranslation(){
 function renderResult(data){
   if(!data||typeof data.translation!=='string'||!Array.isArray(data.keyWords))throw new Error('번역 결과를 읽지 못했습니다.');
   state.result=data;show('idlePlaceholder',false);show('resultSection',true);
-  text('resultGradeBadge',data.grade+'학년 '+(data.direction==='mixed-to-en'?'스마트 완성 ✨':'맞춤 표현 ✨'));
+  text('resultGradeBadge',data.resultType==='transliteration'?'한국어 표기':data.grade+'학년 '+(data.direction==='mixed-to-en'?'스마트 완성 ✨':'맞춤 표현 ✨'));
   text('resultText',data.translation);text('ipaSymbolText',data.pronunciation||'');
   show('pronunciationGuide',!!data.pronunciation&&data.direction!=='en-to-ko');show('cacheBadge',false);
   text('tipText',data.tip||'');show('tipBox',!!data.tip);
